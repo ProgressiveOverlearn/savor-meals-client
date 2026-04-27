@@ -16,7 +16,7 @@ return (
 
             </div>
 
-            {/* div has the navbar-menu classname no matter what, but gets additional classes if the burger icon shows up, causing the navigation links to show up after clicking the burger icon */}
+            {/* div has the navbar-menu classname no matter what, but gets additional classes if the burger icon shows up, causing the navigation links to be "active", meaning they don't hide*/}
             <div className={`navbar-menu ${isMenuOpen ? 'is-active has-background-success-40 has-shadow' : ''}`} id="nav-links">
                 <div className="navbar-end">
                     <a className="navbar-item has-text-white" href="/"><i className="fa-solid fa-house"></i>HOME</a>
