@@ -1,0 +1,139 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Home</title>
+    <!-- <link rel="stylesheet" href="stylesheets/styles.css"> -->
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bulma@1.0.4/css/bulma.min.css">
+    <script src="https://kit.fontawesome.com/cb601e4cd0.js" crossorigin="anonymous"></script>
+</head>
+<body>
+
+    <nav class="navbar has-background-success-40 has-shadow">
+        <div class="navbar-brand p-3 m-1">
+            <img src="images/savor meals.png" alt="website logo" width="80" height="auto">
+        </div>
+        <div class="navbar-menu" id="nav-links">
+            <div class="navbar-end">
+                <a class="navbar-item has-text-white" href="index.html"><i class="fa-solid fa-house"></i>HOME</a>
+                <a class="navbar-item has-text-white" href="#"><i class="fa-solid fa-magnifying-glass"></i>FIND</a>
+                <a class="navbar-item has-text-white" href="create.html"><i class="fa-solid fa-plus"></i>CREATE</a>
+                <a class="navbar-item has-text-white" href="discover.html"><i class="fa-solid fa-map"></i>DISCOVER</a>
+                <a class="navbar-item has-text-white" href="account.html"><i class="fa-solid fa-circle-user"></i>PROFILE</a>
+            </div>
+        </div>
+    </nav>
+
+    <main>
+        <div class="p-1 m-1">
+            <div class="p-1 m-1 has-text-centered">
+                <h1 class="is-size-3 has-text-weight-bold">Find A Meal Plan</h1>
+                <h2 class="p-1 m-1 is-size-5">Please enter the filters below to find meal plans that have been created by other users.</h2>
+            </div>
+
+            <form>
+                <div class="columns has-text-centered">
+                    <div class="column">
+                        <div class="field">
+                            <label class="label" for="tags">Choose a health goal you're targeting:</label>
+                            <div class="control">
+                                <div class="select is-fullwidth">
+                                    <select id="health-goals" name="health-goals">
+                                        <option value="weight-loss">Weight Loss</option>
+                                        <option value="muscle-gain">Muscle Gain</option>
+                                        <option value="maintenance">Maintenance</option>
+                                        <option value="heart-health">Heart Health</option>
+                                        <option value="energy-boost">Energy Boost</option>
+                                        <option value="gut-health">Gut Health</option>
+                                        <option value="mental-clarity">Mental Clarity</option>
+                                        <option value="athletic-performance">Athletic Performance</option>
+                                        <option value="immune-support">Immune Support</option>
+                                        <option value="better-sleep">Better Sleep</option>
+                                    </select>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="column">
+                        <div class="field">
+                            <label class="label" for="number-meals">Number of meals:</label>
+                            <div class="control">
+                                <div class="select is-fullwidth">
+                                    <select id="number-meals" name="number-meals">
+                                        <option value="1">1</option>
+                                        <option value="2">2</option>
+                                        <option value="3">3</option>
+                                        <option value="4">4</option>
+                                        <option value="5">5</option>
+                                        <option value="6">6</option>
+                                    </select>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="column">
+                        <div class="field">
+                            <label class="label" for="calories-range">Calories range:</label>
+                            <div class="control">
+                                <div class="select is-fullwidth">
+                                    <select id="calories-range" name="calories-range">
+                                        <option value="0-500">0-500</option>
+                                        <option value="500-1000">500-1000</option>
+                                        <option value="1000-1500">1000-1500</option>
+                                        <option value="1500-2000">1500-2000</option>
+                                        <option value="2000-2500">2000-2500</option>
+                                        <option value="2500-3000">2500-3000</option>
+                                        <option value="3000+">3000+</option>
+                                    </select>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="has-text-centered my-4">
+                    <button id="search" class="button is-success" type="submit">SEARCH</button>
+                </div>
+            </form>
+
+        </div>
+    </main>
+
+    <!-- Footer with 4 columns and flexbox -->
+    <footer class="has-background-success-40 has-shadow has-text-white">
+        <div class="columns is-justify-content-space-between">
+            <div class="column p-3 m-1 has-text-centered">
+                <img src="images/savor meals.png" alt="Logo" width="80" height="auto">
+            </div>
+            <div class="column has-text-centered is-flex is-flex-direction-column p-3 m-1">
+                <h3 class="is-size-5 has-text-weight-semibold">LINKS:</h3>
+                <ul>
+                    <li><a class="has-text-white" href="index.html"><i class="fa-solid fa-house"></i>HOME</a></li>
+                    <li><a class="has-text-white" href="#"><i class="fa-solid fa-magnifying-glass"></i>FIND</a></li>
+                    <li><a class="has-text-white" href="create.html"><i class="fa-solid fa-plus"></i>CREATE</a></li>
+                    <li><a class="has-text-white" href="discover.html"><i class="fa-solid fa-map"></i>DISCOVER</a></li>
+                </ul>
+            </div>
+            <div class="column has-text-centered is-flex is-flex-direction-column p-3 m-1">
+                <h3 class="is-size-5 has-text-weight-semibold">FIND ME ON:</h3>
+                <ul>
+                    <li><a class="has-text-white" href="https://github.com/ProgressiveOverlearn" target="_blank" rel="noopener noreferrer"><i class="fa-brands fa-github"></i>GitHub</a></li>
+                    <li><a class="has-text-white" href="https://www.twitch.com/" target="_blank" rel="noopener noreferrer"><i class="fa-brands fa-twitch"></i>Twitch</a></li>
+                    <li><a class="has-text-white" href="https://www.linkedin.com" target="_blank" rel="noopener noreferrer"><i class="fa-brands fa-linkedin"></i>LinkedIn</a></li>
+                </ul>
+            </div>
+            <div class="column has-text-centered p-3 m-1">
+                <a href="https://progressiveoverlearn.wordpress.com/" target="_blank" rel="noopener noreferrer"><img src="images/progressiveoverlearn.png" alt="Creator Logo" width="100" height="100"></a>
+            </div>
+        </div>
+
+        <div class="p-3 has-text-centered">
+            <p>DISCLAIMER: Meal plans, recipes, and nutritional information on this website are provided for informational purposes only and are not medical advice. Nutritional values are estimates and may vary. Consult a qualified healthcare professional before making dietary changes. You are responsible for your own health and dietary decisions.</p>
+        </div>
+    </footer>
+
+</body>
+</html>

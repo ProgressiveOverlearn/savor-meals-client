@@ -1,0 +1,116 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Manage Activity</title>
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bulma@1.0.4/css/bulma.min.css">
+    <script src="https://kit.fontawesome.com/cb601e4cd0.js" crossorigin="anonymous"></script>
+</head>
+<body>
+
+    <nav class="navbar has-background-success-40 has-shadow">
+        <div class="navbar-brand p-3 m-1">
+            <img src="images/savor meals.png" alt="website logo" width="80" height="auto">
+        </div>
+        <div class="navbar-menu" id="nav-links">
+            <div class="navbar-end">
+                <a class="navbar-item has-text-white" href="index.html"><i class="fa-solid fa-house"></i>HOME</a>
+                <a class="navbar-item has-text-white" href="find.html"><i class="fa-solid fa-magnifying-glass"></i>FIND</a>
+                <a class="navbar-item has-text-white" href="create.html"><i class="fa-solid fa-plus"></i>CREATE</a>
+                <a class="navbar-item has-text-white" href="discover.html"><i class="fa-solid fa-map"></i>DISCOVER</a>
+                <a class="navbar-item has-text-white" href="account.html"><i class="fa-solid fa-circle-user"></i>PROFILE</a>
+            </div>
+        </div>
+    </nav>
+
+    <main>
+        <div class="p-1 m-1">
+
+            <div class="p-1 m-1 has-text-centered">
+                <h1 class="is-size-3 has-text-weight-bold">View &amp; Manage Posts, Saves, Likes</h1>
+                <h2 class="p-1 m-1 is-size-5">Click on your posts, saves, or likes to view them. If you are the owner of the meal plan, you can delete them.</h2>
+            </div>
+
+            <div class="p-2 m-2">
+                <div class="columns is-multiline">
+
+                    <!-- Posts -->
+                    <div class="column is-12-mobile is-4-tablet has-text-centered">
+                        <div class="notification is-success is-light">
+                            <h3 class="is-size-5 has-text-weight-semibold mb-3" id="your-posts">
+                                <i class="fa-solid fa-file-lines"></i> Posts: 2
+                            </h3>
+                            <div class="is-flex is-flex-direction-column" style="gap: 0.5rem;">
+                                <a href="view-plan.html" class="button is-success is-light is-fullwidth">Meal Plan Name</a>
+                                <a href="view-plan.html" class="button is-success is-light is-fullwidth">Meal Plan Name</a>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Saves -->
+                    <div class="column is-12-mobile is-4-tablet has-text-centered">
+                        <div class="notification is-success is-light">
+                            <h3 class="is-size-5 has-text-weight-semibold mb-3" id="your-saves">
+                                <i class="fa-solid fa-bookmark"></i> Saves: 2
+                            </h3>
+                            <div class="is-flex is-flex-direction-column" style="gap: 0.5rem;">
+                                <a href="view-plan.html" class="button is-success is-light is-fullwidth">Meal Plan Name</a>
+                                <a href="view-plan.html" class="button is-success is-light is-fullwidth">Meal Plan Name</a>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Likes -->
+                    <div class="column is-12-mobile is-4-tablet has-text-centered">
+                        <div class="notification is-success is-light">
+                            <h3 class="is-size-5 has-text-weight-semibold mb-3" id="your-likes">
+                                <i class="fa-solid fa-heart"></i> Likes: 2
+                            </h3>
+                            <div class="is-flex is-flex-direction-column" style="gap: 0.5rem;">
+                                <a href="view-plan.html" class="button is-success is-light is-fullwidth">Meal Plan Name</a>
+                                <a href="view-plan.html" class="button is-success is-light is-fullwidth">Meal Plan Name</a>
+                            </div>
+                        </div>
+                    </div>
+
+                </div>
+            </div>
+
+        </div>
+    </main>
+
+    <footer class="has-background-success-40 has-shadow has-text-white">
+        <div class="columns is-justify-content-space-between">
+            <div class="column p-3 m-1 has-text-centered">
+                <img src="images/savor meals.png" alt="Logo" width="80" height="auto">
+            </div>
+            <div class="column has-text-centered is-flex is-flex-direction-column p-3 m-1">
+                <h3 class="is-size-5 has-text-weight-semibold">LINKS:</h3>
+                <ul>
+                    <li><a class="has-text-white" href="index.html"><i class="fa-solid fa-house"></i>HOME</a></li>
+                    <li><a class="has-text-white" href="find.html"><i class="fa-solid fa-magnifying-glass"></i>FIND</a></li>
+                    <li><a class="has-text-white" href="create.html"><i class="fa-solid fa-plus"></i>CREATE</a></li>
+                    <li><a class="has-text-white" href="discover.html"><i class="fa-solid fa-map"></i>DISCOVER</a></li>
+                </ul>
+            </div>
+            <div class="column has-text-centered is-flex is-flex-direction-column p-3 m-1">
+                <h3 class="is-size-5 has-text-weight-semibold">FIND ME ON:</h3>
+                <ul>
+                    <li><a class="has-text-white" href="https://github.com/ProgressiveOverlearn" target="_blank" rel="noopener noreferrer"><i class="fa-brands fa-github"></i>GitHub</a></li>
+                    <li><a class="has-text-white" href="https://www.twitch.com/" target="_blank" rel="noopener noreferrer"><i class="fa-brands fa-twitch"></i>Twitch</a></li>
+                    <li><a class="has-text-white" href="https://www.linkedin.com" target="_blank" rel="noopener noreferrer"><i class="fa-brands fa-linkedin"></i>LinkedIn</a></li>
+                </ul>
+            </div>
+            <div class="column has-text-centered p-3 m-1">
+                <a href="https://progressiveoverlearn.wordpress.com/" target="_blank" rel="noopener noreferrer"><img src="images/progressiveoverlearn.png" alt="Creator Logo" width="100" height="100"></a>
+            </div>
+        </div>
+
+        <div class="p-3 has-text-centered">
+            <p>DISCLAIMER: Meal plans, recipes, and nutritional information on this website are provided for informational purposes only and are not medical advice. Nutritional values are estimates and may vary. Consult a qualified healthcare professional before making dietary changes. You are responsible for your own health and dietary decisions.</p>
+        </div>
+    </footer>
+
+</body>
+</html>
