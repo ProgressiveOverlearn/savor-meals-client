@@ -1,17 +1,30 @@
+import { useEffect } from 'react';
 import { useSearchParams, useNavigate } from 'react-router-dom';
 import { useState } from 'react';
-import planData from '../data/planData';
+// import planData from '../data/planData';
 
 function Results() {
 
     const [searchParams] = useSearchParams();
     const navigate = useNavigate();
     const [filter, setFilter] = useState('First posted');
+    const [planData, setPlanData] = useState([]);
 
     // Read filters from URL
     const healthGoal = searchParams.get('goal');
     const numberOfMeals = searchParams.get('meals');
     const caloriesRange = searchParams.get('calories');
+
+        useEffect(() => {
+        fetch('http://localhost:8080/api/meal-plans')
+            .then(res => res.json())
+            .then(data => {
+                setPlanData(data);
+            })
+            .catch(err => {
+                console.error('❌ Error fetching meal plans:', err);
+            });
+    }, []);
 
     // Filter planData based on URL params
     const filteredPlans = planData.filter((plan) => {
@@ -39,10 +52,10 @@ function Results() {
             case 'Z to A':
                 return [...filteredPlans].sort((a, b) => b.name.localeCompare(a.name));
             case 'Last posted':
-                return [...filteredPlans].sort((a, b) => b.id - a.id);
+                return [...filteredPlans].sort((a, b) => new Date(b.createdAt) - new Date(a.createdAt));
             case 'First posted':
             default:
-                return [...filteredPlans].sort((a, b) => a.id - b.id);
+                return [...filteredPlans].sort((a, b) => new Date(a.createdAt) - new Date(b.createdAt));
         }
     };
 
