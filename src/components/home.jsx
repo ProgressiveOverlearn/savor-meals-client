@@ -13,6 +13,7 @@ const Home = () => {
       try {
         const response = await fetch(`http://localhost:8080/api/foods-of-the-day?day=${dayNumber}`); //backend of personal project
         const data = await response.json();
+        console.log(`Foods received: ${data}`);
         setFoods(data);
       } catch (error) {
         console.error('❌ Error fetching foods of the day:', error);

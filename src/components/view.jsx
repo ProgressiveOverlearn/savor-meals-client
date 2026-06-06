@@ -1,17 +1,22 @@
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import { useParams, useNavigate } from 'react-router-dom';
-import planData from '../data/planData';
 
 function View() {
 
     const { id } = useParams();
     const navigate = useNavigate();
-    const plan = planData.find((mealPlan) => mealPlan.id === parseInt(id));
+    const [plan, setPlan] = useState(null);
 
-    const totalCalories = Array.from({ length: plan?.numberOfMeals }, (_, i) => plan[`meal${i + 1}Calories`] || 0).reduce((a, b) => a + b, 0);
-    const totalFats = Array.from({ length: plan?.numberOfMeals }, (_, i) => plan[`meal${i + 1}Fats`] || 0).reduce((a, b) => a + b, 0);
-    const totalCarbs = Array.from({ length: plan?.numberOfMeals }, (_, i) => plan[`meal${i + 1}Carbs`] || 0).reduce((a, b) => a + b, 0);
-    const totalProtein = Array.from({ length: plan?.numberOfMeals }, (_, i) => plan[`meal${i + 1}Protein`] || 0).reduce((a, b) => a + b, 0);
+    useEffect(() => {
+        fetch(`http://localhost:8080/api/meal-plans/${id}`)
+            .then(res => res.json())
+            .then(data => {
+                setPlan(Array.isArray(data) ? data[0] : data);
+            })
+            .catch(err => {
+                console.error('❌ Error fetching meal plan:', err);
+            });
+    }, [id]);
 
     // Check localStorage to see if already liked or saved
     const savedPlans = JSON.parse(localStorage.getItem('savedPlans')) || [];
@@ -19,15 +24,19 @@ function View() {
     const [saved, setSaved] = useState(savedPlans.some((p) => p.id === parseInt(id)));
     const [liked, setLiked] = useState(likedPlans.some((p) => p.id === parseInt(id)));
 
+    // Compute totals from meals array
+    const totalCalories = plan?.meals?.reduce((sum, meal) => sum + meal.calories, 0) || 0;
+    const totalFats = plan?.meals?.reduce((sum, meal) => sum + meal.fats, 0) || 0;
+    const totalCarbs = plan?.meals?.reduce((sum, meal) => sum + meal.carbs, 0) || 0;
+    const totalProtein = plan?.meals?.reduce((sum, meal) => sum + meal.protein, 0) || 0;
+
     const handleSave = () => {
         const savedPlans = JSON.parse(localStorage.getItem('savedPlans')) || [];
         if (saved) {
-            // Remove from saves
             const updated = savedPlans.filter((p) => p.id !== plan.id);
             localStorage.setItem('savedPlans', JSON.stringify(updated));
             setSaved(false);
         } else {
-            // Add to saves
             savedPlans.push(plan);
             localStorage.setItem('savedPlans', JSON.stringify(savedPlans));
             setSaved(true);
@@ -37,18 +46,17 @@ function View() {
     const handleLike = () => {
         const likedPlans = JSON.parse(localStorage.getItem('likedPlans')) || [];
         if (liked) {
-            // Remove from likes
             const updated = likedPlans.filter((p) => p.id !== plan.id);
             localStorage.setItem('likedPlans', JSON.stringify(updated));
             setLiked(false);
         } else {
-            // Add to likes
             likedPlans.push(plan);
             localStorage.setItem('likedPlans', JSON.stringify(likedPlans));
             setLiked(true);
         }
     };
 
+    // what the user sees if the meal plan cannot be found
     if (!plan) {
         return (
             <main>
@@ -90,18 +98,15 @@ function View() {
 
                             {/* Meals */}
                             <div className="columns is-multiline mb-2">
-                                {Array.from({ length: plan.numberOfMeals }, (_, i) => {
-                                    const num = i + 1;
-                                    return (
-                                        <div key={num} className="column is-12-mobile is-4-tablet">
-                                            <div className="box">
-                                                <h3 className="has-text-weight-semibold mb-2">Meal {num}: {plan[`meal${num}Name`]}</h3>
-                                                <p>{plan[`meal${num}Ingredients`]}</p>
-                                                <p><strong>Calories:</strong> {plan[`meal${num}Calories`]}</p>
-                                            </div>
+                                {plan.meals.map((meal, i) => (
+                                    <div key={meal._id} className="column is-12-mobile is-4-tablet">
+                                        <div className="box">
+                                            <h3 className="has-text-weight-semibold mb-2">Meal {i + 1}: {meal.name}</h3>
+                                            <p>{meal.ingredients}</p>
+                                            <p><strong>Calories:</strong> {meal.calories}</p>
                                         </div>
-                                    );
-                                })}
+                                    </div>
+                                ))}
                             </div>
 
                             {/* Macronutrients */}

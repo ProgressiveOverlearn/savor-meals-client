@@ -1,6 +1,5 @@
-import { useState} from 'react';
+import { useState } from 'react';
 import { useNavigate, Navigate } from 'react-router-dom';
-import planData from '../data/planData';
 
 function Create({ user }) {
 
@@ -10,7 +9,6 @@ function Create({ user }) {
     const [numberOfMeals, setNumberOfMeals] = useState(1);
     const [caloriesGoal, setCaloriesGoal] = useState('');
     const [error, setError] = useState('');
-    // Generate the information each meal will have for data entry
     const [meals, setMeals] = useState([
         { name: '', ingredients: '', fats: '', carbs: '', protein: '', calories: '' }
     ]);
@@ -27,7 +25,6 @@ function Create({ user }) {
     const handleNumberOfMeals = (event) => {
         const num = parseInt(event.target.value);
         setNumberOfMeals(num);
-
         const updatedMeals = Array.from({ length: num }, (_, i) => (
             meals[i] || { name: '', ingredients: '', fats: '', carbs: '', protein: '', calories: '' }
         ));
@@ -35,28 +32,31 @@ function Create({ user }) {
     };
 
     // Update a specific meal's field
-const handleMealChange = (index, field, value) => {
-    const updatedMeals = [...meals];
-    updatedMeals[index][field] = value;
+    const handleMealChange = (index, field, value) => {
+        const updatedMeals = [...meals];
+        updatedMeals[index][field] = value;
 
-    // Auto-calculate calories from macros when any macro changes. Also clamp values to only 0 and above
-    if (field === 'fats' || field === 'carbs' || field === 'protein') {
-        const clampedValue = Math.max(0, parseFloat(value) || 0); // returns the largest value, which can be zero!
-        updatedMeals[index][field] = clampedValue;
+        if (field === 'fats' || field === 'carbs' || field === 'protein') {
+            const clampedValue = Math.max(0, parseFloat(value) || 0);
+            updatedMeals[index][field] = clampedValue;
 
-        const fats = parseFloat(field === 'fats' ? clampedValue : updatedMeals[index].fats) || 0;
-        const carbs = parseFloat(field === 'carbs' ? clampedValue : updatedMeals[index].carbs) || 0;
-        const protein = parseFloat(field === 'protein' ? clampedValue : updatedMeals[index].protein) || 0;
+            const fats = parseFloat(field === 'fats' ? clampedValue : updatedMeals[index].fats) || 0;
+            const carbs = parseFloat(field === 'carbs' ? clampedValue : updatedMeals[index].carbs) || 0;
+            const protein = parseFloat(field === 'protein' ? clampedValue : updatedMeals[index].protein) || 0;
 
-        updatedMeals[index].calories = (fats * 9) + (carbs * 4) + (protein * 4);
-    }
+            updatedMeals[index].calories = (fats * 9) + (carbs * 4) + (protein * 4);
+        }
         setMeals(updatedMeals);
     };
 
+    const handleSubmit = async () => {
 
-    const handleSubmit = () => {
+        //check to see what is being submitted
+        console.log('planName:', planName);
+        console.log('caloriesGoal:', caloriesGoal);
+        console.log('meals:', meals);
 
-        // Validate required fields like plan name, calories goal, meal numbers, and calories goal
+        // Validate required fields
         if (!planName) {
             setError('Please enter a meal plan name.');
             return;
@@ -65,52 +65,57 @@ const handleMealChange = (index, field, value) => {
             setError('Please enter a valid calories goal.');
             return;
         }
-        
         for (let i = 0; i < meals.length; i++) {
             if (!meals[i].name || !meals[i].ingredients) {
                 setError(`Please fill in the name and ingredients for Meal ${i + 1}.`);
                 return;
             }
             if (!meals[i].calories || meals[i].calories <= 0) {
-                setError(`Meal ${i + 1} must have calories greater than 0. Please enter valid values.`);
+                setError(`Meal ${i + 1} must have calories greater than 0.`);
                 return;
-    }
+            }
         }
 
         // Build new meal plan object
         const newPlan = {
-            id: planData.length + 1,
-            name: planName,
-            image: 'https://placehold.co/400x300?text=' + planName.replace(/ /g, '+'),
             creator: user?.username || 'Anonymous',
+            name: planName,
             healthGoal,
             numberOfMeals,
-            totalCalories: parseInt(caloriesGoal),
+            caloriesGoal: parseInt(caloriesGoal),
+            totalCalories: currentCalories,
+            meals: meals.map(meal => ({
+                name: meal.name,
+                ingredients: meal.ingredients,
+                fats: parseFloat(meal.fats) || 0,
+                carbs: parseFloat(meal.carbs) || 0,
+                protein: parseFloat(meal.protein) || 0,
+                calories: parseFloat(meal.calories) || 0,
+            }))
         };
 
-        // Add each meal's data to the plan
-        meals.forEach((meal, i) => {
-            const num = i + 1;
-            newPlan[`meal${num}Name`] = meal.name;
-            newPlan[`meal${num}Ingredients`] = meal.ingredients;
-            newPlan[`meal${num}Fats`] = parseFloat(meal.fats) || 0;
-            newPlan[`meal${num}Carbs`] = parseFloat(meal.carbs) || 0;
-            newPlan[`meal${num}Protein`] = parseFloat(meal.protein) || 0;
-            newPlan[`meal${num}Calories`] = parseFloat(meal.calories) || 0;
-        });
+        try {
+            const response = await fetch('http://localhost:8080/api/meal-plans/save-plan', {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify(newPlan),
+            });
 
-        // Push to planData and navigate to results
-        planData.push(newPlan);
-        setError('');
-        navigate('/find');
+            if (!response.ok) {
+                const err = await response.json();
+                setError(err.error || 'Failed to save meal plan.');
+                return;
+            }
 
-        // Save user's created plans to localStorage. MORE IMPORTANT FOR BACKEND because the meal plans will not persist right now...even though i can create the meal plans and peak at them until i move into another page
-        const userPlans = JSON.parse(localStorage.getItem('userPlans')) || [];
-        userPlans.push(newPlan);
-        localStorage.setItem('userPlans', JSON.stringify(userPlans));
+            console.log('💾 Meal plan saved successfully!');
+            setError('');
+            navigate('/find');
+        } catch (err) {
+            console.error('❌ Error saving meal plan:', err);
+            setError('Something went wrong. Please try again.');
+        }
     };
 
-    // MAIN PORTION OF THE CODE
     return (
         <main>
             <div className="p-1 m-1">
@@ -176,8 +181,7 @@ const handleMealChange = (index, field, value) => {
                         <div className="field">
                             <label className="label" htmlFor="calories-goal">Calories goal:</label>
                             <div className="control">
-                                {/* Also clamps calorie goal */}
-                                <input className="input" type="number" id="calories-goal" placeholder="Enter calories goal" value={caloriesGoal} onChange={(event) => setCaloriesGoal(Math.max(0, parseFloat(event.target.value) || 0))}/>
+                                <input className="input" type="number" id="calories-goal" placeholder="Enter calories goal" value={caloriesGoal} onChange={(event) => setCaloriesGoal(Math.max(0, parseFloat(event.target.value) || 0))} />
                             </div>
                         </div>
                     </div>
@@ -200,7 +204,6 @@ const handleMealChange = (index, field, value) => {
                         </div>
                     </div>
                 </div>
-                        
 
                 {/* Dynamic Meal Forms */}
                 {meals.map((meal, index) => (
@@ -222,13 +225,12 @@ const handleMealChange = (index, field, value) => {
                             </div>
                         </div>
 
-                        {/* Nutrition Info - entering manually for now, API later */}
                         <p className="has-text-weight-semibold mb-2">Nutrition Info <span className="is-size-7 has-text-grey">(enter manually for now)</span></p>
                         <div className="columns">
                             <div className="column">
                                 <div className="field">
                                     <label className="label">Calories:</label>
-                                    <input className="input" type="number" placeholder="e.g. 445" value={meal.calories} onChange={(event) => handleMealChange(index, 'calories', event.target.value)} disabled/>
+                                    <input className="input" type="number" placeholder="e.g. 445" value={meal.calories} onChange={(event) => handleMealChange(index, 'calories', event.target.value)} disabled />
                                 </div>
                             </div>
                             <div className="column">
