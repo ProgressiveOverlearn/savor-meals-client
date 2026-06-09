@@ -4,15 +4,15 @@ import { useState } from 'react';
 function Account({ user, setUser }) {
 
     const navigate = useNavigate();
-    const [heightNumber, setHeightNumber] = useState();
-    const [heightUnit, setHeightUnit] = useState('');
-    const [weightNumber, setWeightNumber] = useState();
-    const [weightUnit, setWeightUnit] = useState('');
-    const [gender, setGender] = useState('');
+    const [heightNumber, setHeightNumber] = useState(user.heightNumber || '');
+    const [heightUnit, setHeightUnit] = useState(user.heightUnit || '');
+    const [weightNumber, setWeightNumber] = useState(user.weightNumber || '');
+    const [weightUnit, setWeightUnit] = useState(user.weightUnit || '');
+    const [gender, setGender] = useState(user.gender || '');
     const [isEditing, setIsEditing] = useState(false);
     const [error, setError] = useState('');
 
-    const updateBodyMeasurements = () => {
+    const updateBodyMeasurements = async () => {
     // Check if only one of height fields is filled. Lots of possibilities for error checking, but will update...
     if (heightNumber && !heightUnit || !heightNumber && heightUnit) {
         setError('Please fill in both height number and unit.');
@@ -48,14 +48,46 @@ function Account({ user, setUser }) {
     }
 
     // No errors? Great, now we can update the user settings!
-    setError('');
-    const height = heightNumber && heightUnit ? `${heightNumber} ${heightUnit}` : 'Not provided';
-    const weight = weightNumber && weightUnit ? `${weightNumber} ${weightUnit}` : 'Not provided';
-    const genderValue = gender || 'Not provided';
-    const updatedUser = { ...user, heightNumber, heightUnit, weightNumber, weightUnit, gender: genderValue, height, weight };
-    setUser(updatedUser);
-    localStorage.setItem('user', JSON.stringify(updatedUser));
-    setIsEditing(false);
+        setError('');
+
+
+    try {
+        const response = await fetch(`http://localhost:8080/api/users/${user.username}`, {
+            method: 'PUT',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({ heightNumber, heightUnit, weightNumber, weightUnit, gender }),
+        });
+
+        if (!response.ok) {
+            const err = await response.json();
+            setError(err.error || 'Failed to update profile.');
+            return;
+        }
+
+        const updatedData = await response.json();
+        
+    // Update local state and localStorage with backend response
+        const height = heightNumber && heightUnit ? `${heightNumber} ${heightUnit}` : 'Not provided';
+        const weight = weightNumber && weightUnit ? `${weightNumber} ${weightUnit}` : 'Not provided';
+        const updatedUser = { 
+            ...user, 
+            heightNumber: updatedData.heightNumber, 
+            heightUnit: updatedData.heightUnit, 
+            weightNumber: updatedData.weightNumber, 
+            weightUnit: updatedData.weightUnit, 
+            gender: updatedData.gender,
+            height,
+            weight
+        };
+
+        setUser(updatedUser);
+        localStorage.setItem('user', JSON.stringify(updatedUser));
+        setIsEditing(false);
+        console.log('✅ Profile updated successfully!');
+    } catch (err) {
+        console.error('❌ Error updating profile:', err);
+        setError('Something went wrong. Please try again.');
+    }
 };
 
     const handleLogout = () => {

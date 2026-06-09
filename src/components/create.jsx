@@ -9,19 +9,17 @@ function Create({ user }) {
     const [numberOfMeals, setNumberOfMeals] = useState(1);
     const [caloriesGoal, setCaloriesGoal] = useState('');
     const [error, setError] = useState('');
+    const [loadingNutrition, setLoadingNutrition] = useState(null); // tracks which meal is loading
     const [meals, setMeals] = useState([
         { name: '', ingredients: '', fats: '', carbs: '', protein: '', calories: '' }
     ]);
 
-    // Require an account to create meal plans
     if (!user?.username) {
         return <Navigate to="/login" />;
     }
 
-    // Helps keep track of calories across all meals entered
     const currentCalories = meals.reduce((total, meal) => total + (parseFloat(meal.calories) || 0), 0);
 
-    // When number of meals changes, add or remove meal objects
     const handleNumberOfMeals = (event) => {
         const num = parseInt(event.target.value);
         setNumberOfMeals(num);
@@ -31,7 +29,6 @@ function Create({ user }) {
         setMeals(updatedMeals);
     };
 
-    // Update a specific meal's field
     const handleMealChange = (index, field, value) => {
         const updatedMeals = [...meals];
         updatedMeals[index][field] = value;
@@ -49,34 +46,77 @@ function Create({ user }) {
         setMeals(updatedMeals);
     };
 
+    const getNutritionFromGemini = async (index) => {
+        const meal = meals[index];
+
+        if (!meal.ingredients) {
+            setError(`Please enter ingredients for Meal ${index + 1} before getting nutrition info.`);
+            return;
+        }
+
+        setLoadingNutrition(index);
+        setError('');
+
+        try {
+            const response = await fetch('http://localhost:8080/api/nutrition/analyze', {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({ type: 'text', ingredients: meal.ingredients }),
+            });
+
+            if (!response.ok) {
+                setError('Could not get nutrition info. Try again.');
+                setLoadingNutrition(null);
+                return;
+            }
+
+            const data = await response.json();
+
+            const updatedMeals = [...meals];
+            updatedMeals[index].fats = data.fats || 0;
+            updatedMeals[index].carbs = data.carbs || 0;
+            updatedMeals[index].protein = data.protein || 0;
+            updatedMeals[index].calories = (data.fats * 9) + (data.carbs * 4) + (data.protein * 4);
+            setMeals(updatedMeals);
+
+        } catch (err) {
+            console.error('❌ Gemini nutrition error:', err);
+            setError('Something went wrong getting nutrition info.');
+        } finally {
+            setLoadingNutrition(null);
+        }
+    };
+
     const handleSubmit = async () => {
 
-        //check to see what is being submitted
-        console.log('planName:', planName);
-        console.log('caloriesGoal:', caloriesGoal);
-        console.log('meals:', meals);
-
-        // Validate required fields
-        if (!planName) {
+        // Validate plan name
+        if (!planName.trim()) {
             setError('Please enter a meal plan name.');
             return;
         }
-        if (!caloriesGoal || caloriesGoal < 0) {
+
+        // Validate calories goal
+        if (!caloriesGoal || caloriesGoal <= 0) {
             setError('Please enter a valid calories goal.');
             return;
         }
+
+        // Validate each meal
         for (let i = 0; i < meals.length; i++) {
-            if (!meals[i].name || !meals[i].ingredients) {
-                setError(`Please fill in the name and ingredients for Meal ${i + 1}.`);
+            if (!meals[i].name.trim()) {
+                setError(`Please enter a name for Meal ${i + 1}.`);
+                return;
+            }
+            if (!meals[i].ingredients.trim()) {
+                setError(`Please enter ingredients for Meal ${i + 1}.`);
                 return;
             }
             if (!meals[i].calories || meals[i].calories <= 0) {
-                setError(`Meal ${i + 1} must have calories greater than 0.`);
+                setError(`Meal ${i + 1} must have calories greater than 0. Use "Get Nutrition Info" or enter manually.`);
                 return;
             }
         }
 
-        // Build new meal plan object
         const newPlan = {
             creator: user?.username || 'Anonymous',
             name: planName,
@@ -214,23 +254,46 @@ function Create({ user }) {
                             <div className="column">
                                 <div className="field">
                                     <label className="label">Meal Name:</label>
-                                    <input className="input" type="text" placeholder="e.g. Bean Soup" value={meal.name} onChange={(event) => handleMealChange(index, 'name', event.target.value)} />
+                                    <input
+                                        className="input"
+                                        type="text"
+                                        placeholder="e.g. Bean Soup"
+                                        value={meal.name}
+                                        onChange={(event) => handleMealChange(index, 'name', event.target.value)}
+                                    />
                                 </div>
                             </div>
+
                             <div className="column">
                                 <div className="field">
                                     <label className="label">Ingredients:</label>
-                                    <input className="input" type="text" placeholder="e.g. 8 oz tomato soup, chickpeas" value={meal.ingredients} onChange={(event) => handleMealChange(index, 'ingredients', event.target.value)} />
+                                    <input
+                                        className="input mb-2"
+                                        type="text"
+                                        placeholder="e.g. 8 oz tomato soup, chickpeas, garlic"
+                                        value={meal.ingredients}
+                                        onChange={(event) => handleMealChange(index, 'ingredients', event.target.value)}
+                                    />
+                                    <button
+                                        className={`button is-success is-fullwidth ${loadingNutrition === index ? 'is-loading' : ''}`}
+                                        type="button"
+                                        onClick={() => getNutritionFromGemini(index)}
+                                        disabled={loadingNutrition === index}
+                                    >
+                                        <i className="fa-solid fa-brain"></i>&nbsp;Get Nutrition Info
+                                    </button>
                                 </div>
                             </div>
                         </div>
 
-                        <p className="has-text-weight-semibold mb-2">Nutrition Info <span className="is-size-7 has-text-grey">(enter manually for now)</span></p>
+                        <p className="has-text-weight-semibold mb-2">
+                            Nutrition Info <span className="is-size-7 has-text-grey">(auto-filled or enter manually)</span>
+                        </p>
                         <div className="columns">
                             <div className="column">
                                 <div className="field">
                                     <label className="label">Calories:</label>
-                                    <input className="input" type="number" placeholder="e.g. 445" value={meal.calories} onChange={(event) => handleMealChange(index, 'calories', event.target.value)} disabled />
+                                    <input className="input" type="number" placeholder="e.g. 445" value={meal.calories} disabled />
                                 </div>
                             </div>
                             <div className="column">
