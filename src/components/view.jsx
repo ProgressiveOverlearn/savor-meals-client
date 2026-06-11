@@ -1,28 +1,48 @@
 import { useState, useEffect } from 'react';
 import { useParams, useNavigate } from 'react-router-dom';
 
-function View() {
+function View({ user }) {
 
     const { id } = useParams();
     const navigate = useNavigate();
     const [plan, setPlan] = useState(null);
+    const [loading, setLoading] = useState(true);
+    const [saved, setSaved] = useState(false);
+    const [liked, setLiked] = useState(false);
+    const [error, setError] = useState(''); //errors to help the user what went wrong
 
-    useEffect(() => {
-        fetch(`http://localhost:8080/api/meal-plans/${id}`)
-            .then(res => res.json())
-            .then(data => {
-                setPlan(Array.isArray(data) ? data[0] : data);
-            })
-            .catch(err => {
-                console.error('❌ Error fetching meal plan:', err);
-            });
-    }, [id]);
+useEffect(() => {
+    const fetchData = async () => {
+        try {
+            const planRes = await fetch(`http://localhost:8080/api/meal-plans/${id}`);
+            const planData = await planRes.json();
+            const fetchedPlan = Array.isArray(planData) ? planData[0] : planData;
+            setPlan(fetchedPlan);
 
-    // Check localStorage to see if already liked or saved
-    const savedPlans = JSON.parse(localStorage.getItem('savedPlans')) || [];
-    const likedPlans = JSON.parse(localStorage.getItem('likedPlans')) || [];
-    const [saved, setSaved] = useState(savedPlans.some((p) => p.id === parseInt(id)));
-    const [liked, setLiked] = useState(likedPlans.some((p) => p.id === parseInt(id)));
+            if (user?.username) {
+                const userRes = await fetch(`http://localhost:8080/api/users/${user.username}`);
+                const userData = await userRes.json();
+                
+                console.log('savedPlans:', userData.savedPlans);
+                console.log('likedPlans:', userData.likedPlans);
+                console.log('fetchedPlan._id:', fetchedPlan?._id);
+
+                setSaved(userData.savedPlans?.some(p => p._id === fetchedPlan?._id?.toString()));
+                setLiked(userData.likedPlans?.some(p => p._id === fetchedPlan?._id?.toString()));
+            } else {
+                setSaved(false);
+                setLiked(false);
+            }
+
+        } catch (err) {
+            console.error('❌ Error fetching data:', err);
+        } finally {
+            setLoading(false);
+        }
+    };
+
+    fetchData();
+}, [id, user?.username]);
 
     // Compute totals from meals array
     const totalCalories = plan?.meals?.reduce((sum, meal) => sum + meal.calories, 0) || 0;
@@ -30,33 +50,48 @@ function View() {
     const totalCarbs = plan?.meals?.reduce((sum, meal) => sum + meal.carbs, 0) || 0;
     const totalProtein = plan?.meals?.reduce((sum, meal) => sum + meal.protein, 0) || 0;
 
-    const handleSave = () => {
-        const savedPlans = JSON.parse(localStorage.getItem('savedPlans')) || [];
-        if (saved) {
-            const updated = savedPlans.filter((p) => p.id !== plan.id);
-            localStorage.setItem('savedPlans', JSON.stringify(updated));
-            setSaved(false);
-        } else {
-            savedPlans.push(plan);
-            localStorage.setItem('savedPlans', JSON.stringify(savedPlans));
-            setSaved(true);
-        }
-    };
+const handleSave = async () => {
+    console.log('user:', user);
+    console.log('plan._id:', plan?._id);
+    if (!user?.username) { navigate('/login'); return; }
+    try {
+        const res = await fetch(`http://localhost:8080/api/users/${user.username}/save/${plan._id}`, {
+            method: saved ? 'DELETE' : 'POST',
+        });
+        console.log('save response status:', res.status);
+        const data = await res.json();
+        console.log('save response data:', data);
+        setSaved(!saved);
+    } catch (err) {
+        console.error('❌ Error saving plan:', err);
+    }
+};
 
-    const handleLike = () => {
-        const likedPlans = JSON.parse(localStorage.getItem('likedPlans')) || [];
-        if (liked) {
-            const updated = likedPlans.filter((p) => p.id !== plan.id);
-            localStorage.setItem('likedPlans', JSON.stringify(updated));
-            setLiked(false);
-        } else {
-            likedPlans.push(plan);
-            localStorage.setItem('likedPlans', JSON.stringify(likedPlans));
-            setLiked(true);
-        }
-    };
+const handleLike = async () => {
+    console.log('user:', user);
+    console.log('plan._id:', plan?._id);
+    if (!user?.username) { navigate('/login'); return; }
+    try {
+        const res = await fetch(`http://localhost:8080/api/users/${user.username}/like/${plan._id}`, {
+            method: liked ? 'DELETE' : 'POST',
+        });
+        console.log('like response status:', res.status);
+        const data = await res.json();
+        console.log('like response data:', data);
+        setLiked(!liked);
+    } catch (err) {
+        console.error('❌ Error liking plan:', err);
+    }
+};
 
-    // what the user sees if the meal plan cannot be found
+    if (loading) return (
+        <main>
+            <div className="p-1 m-1 has-text-centered">
+                <p className="is-size-5">Loading meal plan...</p>
+            </div>
+        </main>
+    );
+
     if (!plan) {
         return (
             <main>

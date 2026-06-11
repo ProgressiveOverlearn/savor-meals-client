@@ -1,22 +1,51 @@
-import { useNavigate } from 'react-router-dom';
-import { Navigate } from 'react-router-dom';
-import planData from '../data/planData';
+import { useNavigate, Navigate } from 'react-router-dom';
+import { useState, useEffect } from 'react';
 
 function Manage({ user }) {
 
     const navigate = useNavigate();
+    const [userPosts, setUserPosts] = useState([]);
+    const [savedPlans, setSavedPlans] = useState([]);
+    const [likedPlans, setLikedPlans] = useState([]);
+    const [loading, setLoading] = useState(true);
 
     // Require login
     if (!user?.username) {
         return <Navigate to="/login" />;
     }
 
-    // Get plans created by the logged in user. Easy to do right now because of the data file
-    const userPosts = planData.filter((plan) => plan.creator === user.username);
+    //used conditionally. if the user is logged in, use it. otherwise, you have to log in.
+    useEffect(() => {
+        const fetchUserData = async () => {
+            try {
+                // Fetch posts created by this user from the backend
+                const postsResponse = await fetch(`http://localhost:8080/api/meal-plans/user/${user.username}`);
+                const postsData = await postsResponse.json();
+                setUserPosts(Array.isArray(postsData) ? postsData : []);
 
-    // Get saved and liked plans from localStorage...for now. Will worry more about this the backend
-    const savedPlans = JSON.parse(localStorage.getItem('savedPlans')) || [];
-    const likedPlans = JSON.parse(localStorage.getItem('likedPlans')) || [];
+                // Fetch full user profile to get savedPlans and likedPlans
+                const userResponse = await fetch(`http://localhost:8080/api/users/${user.username}`);
+                const userData = await userResponse.json();
+                setSavedPlans(userData.savedPlans || []);
+                setLikedPlans(userData.likedPlans || []);
+
+            } catch (err) {
+                console.error('❌ Error fetching manage data:', err);
+            } finally {
+                setLoading(false);
+            }
+        };
+
+        fetchUserData();
+    }, [user.username]);
+
+    if (loading) return (
+        <main>
+            <div className="p-1 m-1 has-text-centered">
+                <p className="is-size-5">Loading your activity...</p>
+            </div>
+        </main>
+    );
 
     return (
         <main>
@@ -61,7 +90,7 @@ function Manage({ user }) {
                                         <p className="is-size-7 has-text-grey">No saves yet.</p>
                                     ) : (
                                         savedPlans.map((plan) => (
-                                            <button key={plan.id} className="button is-success is-light is-fullwidth" onClick={() => navigate(`/view/${plan.id}`)}>
+                                            <button key={plan.id || plan._id} className="button is-success is-light is-fullwidth" onClick={() => navigate(`/view/${plan.id || plan._id}`)}>
                                                 {plan.name}
                                             </button>
                                         ))
@@ -81,7 +110,7 @@ function Manage({ user }) {
                                         <p className="is-size-7 has-text-grey">No likes yet.</p>
                                     ) : (
                                         likedPlans.map((plan) => (
-                                            <button key={plan.id} className="button is-success is-light is-fullwidth" onClick={() => navigate(`/view/${plan.id}`)}>
+                                            <button key={plan.id || plan._id} className="button is-success is-light is-fullwidth" onClick={() => navigate(`/view/${plan.id || plan._id}`)}>
                                                 {plan.name}
                                             </button>
                                         ))
