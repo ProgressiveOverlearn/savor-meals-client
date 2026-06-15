@@ -37,6 +37,7 @@ function App() {
         <Route path="/discover" element={<Discover />} />
         <Route path="/account" element={<Account user={user} setUser={setUser} />} />
         <Route path="/create" element={<Create user={user} />} />
+        <Route path="/create/edit/:id" element={<Create user={user} />} /> //keep the meal plan form while editing
         <Route path="/find" element={<Find user={user} />} />
         <Route path="/login" element={<Login user={user} setUser={setUser} />} />
         <Route path="/manage" element={<Manage user={user} />} />

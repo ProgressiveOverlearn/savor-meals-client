@@ -101,7 +101,7 @@ function Account({ user, setUser }) {
 
                 <div className="p-1 m-1 has-text-centered">
                     <h1 className="is-size-3 has-text-weight-bold">Account Settings</h1>
-                    <h2 className="p-1 m-1 is-size-5">View and modify your settings here.</h2>
+                    <h2 className="p-1 m-1 is-size-5">Welcome, {user.username}!</h2>
                 </div>
 
                 <div className="p-2 m-2">

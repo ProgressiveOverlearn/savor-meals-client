@@ -1,15 +1,18 @@
-import { useState } from 'react';
-import { useNavigate, Navigate } from 'react-router-dom';
+import { useState, useEffect } from 'react';
+import { useNavigate, Navigate, useParams } from 'react-router-dom';
 
 function Create({ user }) {
 
     const navigate = useNavigate();
+    const { id } = useParams();
+    const isEditing = !!id;
+
     const [planName, setPlanName] = useState('');
     const [healthGoal, setHealthGoal] = useState('weight-loss');
     const [numberOfMeals, setNumberOfMeals] = useState(1);
     const [caloriesGoal, setCaloriesGoal] = useState('');
     const [error, setError] = useState('');
-    const [loadingNutrition, setLoadingNutrition] = useState(null); // tracks which meal is loading
+    const [loadingNutrition, setLoadingNutrition] = useState(null);
     const [meals, setMeals] = useState([
         { name: '', ingredients: '', fats: '', carbs: '', protein: '', calories: '' }
     ]);
@@ -17,6 +20,29 @@ function Create({ user }) {
     if (!user?.username) {
         return <Navigate to="/login" />;
     }
+
+    useEffect(() => {
+        if (isEditing) {
+            fetch(`http://localhost:8080/api/meal-plans/${id}`)
+                .then(res => res.json())
+                .then(data => {
+                    const plan = Array.isArray(data) ? data[0] : data;
+                    setPlanName(plan.name);
+                    setHealthGoal(plan.healthGoal);
+                    setNumberOfMeals(plan.numberOfMeals);
+                    setCaloriesGoal(plan.caloriesGoal);
+                    setMeals(plan.meals.map(meal => ({
+                        name: meal.name,
+                        ingredients: meal.ingredients,
+                        fats: meal.fats,
+                        carbs: meal.carbs,
+                        protein: meal.protein,
+                        calories: meal.calories,
+                    })));
+                })
+                .catch(err => console.error('❌ Error fetching plan:', err));
+        }
+    }, [id, isEditing]);
 
     const currentCalories = meals.reduce((total, meal) => total + (parseFloat(meal.calories) || 0), 0);
 
@@ -61,7 +87,7 @@ function Create({ user }) {
             const response = await fetch('http://localhost:8080/api/nutrition/analyze', {
                 method: 'POST',
                 headers: { 'Content-Type': 'application/json' },
-                body: JSON.stringify({ type: 'text', ingredients: meal.ingredients }),
+                body: JSON.stringify({ type: 'text', name: meal.name, ingredients: meal.ingredients }),
             });
 
             if (!response.ok) {
@@ -89,19 +115,14 @@ function Create({ user }) {
 
     const handleSubmit = async () => {
 
-        // Validate plan name
         if (!planName.trim()) {
             setError('Please enter a meal plan name.');
             return;
         }
-
-        // Validate calories goal
         if (!caloriesGoal || caloriesGoal <= 0) {
             setError('Please enter a valid calories goal.');
             return;
         }
-
-        // Validate each meal
         for (let i = 0; i < meals.length; i++) {
             if (!meals[i].name.trim()) {
                 setError(`Please enter a name for Meal ${i + 1}.`);
@@ -117,7 +138,7 @@ function Create({ user }) {
             }
         }
 
-        const newPlan = {
+        const planData = {
             creator: user?.username || 'Anonymous',
             name: planName,
             healthGoal,
@@ -135,10 +156,15 @@ function Create({ user }) {
         };
 
         try {
-            const response = await fetch('http://localhost:8080/api/meal-plans/save-plan', {
-                method: 'POST',
+            //POST for creating new meal plan, PUT to update a meal plan
+            const url = isEditing
+                ? `http://localhost:8080/api/meal-plans/${id}`
+                : 'http://localhost:8080/api/meal-plans/save-plan';
+
+            const response = await fetch(url, {
+                method: isEditing ? 'PUT' : 'POST',
                 headers: { 'Content-Type': 'application/json' },
-                body: JSON.stringify(newPlan),
+                body: JSON.stringify(planData),
             });
 
             if (!response.ok) {
@@ -147,9 +173,8 @@ function Create({ user }) {
                 return;
             }
 
-            console.log('💾 Meal plan saved successfully!');
             setError('');
-            navigate('/find');
+            navigate(isEditing ? `/view/${id}` : '/find');
         } catch (err) {
             console.error('❌ Error saving meal plan:', err);
             setError('Something went wrong. Please try again.');
@@ -160,8 +185,12 @@ function Create({ user }) {
         <main>
             <div className="p-1 m-1">
                 <div className="p-1 m-1 has-text-centered">
-                    <h1 className="is-size-3 has-text-weight-bold">Create A Meal Plan</h1>
-                    <h2 className="p-1 m-1 is-size-5">Describe your meal plan. Fill in the details below and add meals.</h2>
+                    <h1 className="is-size-3 has-text-weight-bold">
+                        {isEditing ? 'Edit Meal Plan' : 'Create A Meal Plan'}
+                    </h1>
+                    <h2 className="p-1 m-1 is-size-5">
+                        {isEditing ? 'Update your meal plan details below.' : 'Describe your meal plan. Fill in the details below and add meals.'}
+                    </h2>
                 </div>
 
                 {/* Plan Details */}
@@ -266,11 +295,12 @@ function Create({ user }) {
 
                             <div className="column">
                                 <div className="field">
-                                    <label className="label">Ingredients:</label>
-                                    <input
+                                    <label className="label">Measured Ingredients:</label>
+                                    <textarea
                                         className="input mb-2"
-                                        type="text"
-                                        placeholder="e.g. 8 oz tomato soup, chickpeas, garlic"
+                                        rows="1"
+                                        style={{height: "auto"}}
+                                        placeholder="measurements give more accurate results for yourself and others"
                                         value={meal.ingredients}
                                         onChange={(event) => handleMealChange(index, 'ingredients', event.target.value)}
                                     />
@@ -323,9 +353,16 @@ function Create({ user }) {
 
                 {/* Submit */}
                 <div className="has-text-centered my-4">
-                    <button className="button is-success" type="button" onClick={handleSubmit}>
-                        SUBMIT MEAL PLAN
-                    </button>
+                    <div className="buttons is-centered">
+                        <button className="button is-success" type="button" onClick={handleSubmit}>
+                            {isEditing ? 'UPDATE MEAL PLAN' : 'SUBMIT MEAL PLAN'}
+                        </button>
+                        {isEditing && (
+                            <button className="button" type="button" onClick={() => navigate(`/view/${id}`)}>
+                                <i className="fa-solid fa-x"></i>&nbsp;CANCEL
+                            </button>
+                        )}
+                    </div>
                 </div>
 
             </div>

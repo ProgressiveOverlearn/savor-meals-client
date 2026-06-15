@@ -84,6 +84,26 @@ const handleLike = async () => {
     }
 };
 
+    const handleDelete = async () => {
+    if (!window.confirm('Are you sure you want to delete this meal plan?')) return;
+
+    try {
+        const response = await fetch(`http://localhost:8080/api/meal-plans/${plan.id}`, {
+            method: 'DELETE',
+        });
+
+        if (!response.ok) {
+            console.error('❌ Failed to delete meal plan');
+            return;
+        }
+
+        console.log('🗑️ Meal plan deleted');
+        navigate('/find');
+    } catch (err) {
+        console.error('❌ Error deleting meal plan:', err);
+    }
+};
+
     if (loading) return (
         <main>
             <div className="p-1 m-1 has-text-centered">
@@ -117,7 +137,8 @@ const handleLike = async () => {
                 <div className="notification is-success is-light p-4 m-4">
 
                     <div className="has-text-centered mb-4">
-                        <h2 className="is-size-4 has-text-weight-bold">{plan.name}</h2>
+                        {/* plan name is white when in dark mode, so declaring it black to stay black */}
+                        <h2 className="is-size-4 has-text-weight-bold has-text-black">{plan.name}</h2>
                         <p><i className="fa-solid fa-circle-user"></i> {plan.creator}</p>
                     </div>
 
@@ -133,11 +154,11 @@ const handleLike = async () => {
 
                             {/* Meals */}
                             <div className="columns is-multiline mb-2">
-                                {plan.meals.map((meal, i) => (
+                                {plan.meals.map((meal) => (
                                     <div key={meal._id} className="column is-12-mobile is-4-tablet">
                                         <div className="box">
-                                            <h3 className="has-text-weight-semibold mb-2">Meal {i + 1}: {meal.name}</h3>
-                                            <p>{meal.ingredients}</p>
+                                            <h3 className="has-text-weight-semibold mb-2">{meal.name}</h3>
+                                            <p className="mb-2">{meal.ingredients}</p>
                                             <p><strong>Calories:</strong> {meal.calories}</p>
                                         </div>
                                     </div>
@@ -170,17 +191,29 @@ const handleLike = async () => {
                             </div>
 
                             {/* Action Buttons */}
+
                             <div className="buttons is-centered">
-                                <button className={`button ${saved ? 'is-warning' : 'is-success'}`} onClick={handleSave}>
+                                <button className={`button ${saved ? 'is-info' : 'is-success'}`} onClick={handleSave}>
                                     <i className="fa-solid fa-bookmark"></i>&nbsp;{saved ? 'SAVED' : 'SAVE'}
                                 </button>
-                                <button className={`button ${liked ? 'is-danger' : 'is-success'}`} onClick={handleLike}>
+                                <button className={`button ${liked ? 'is-info' : 'is-success'}`} onClick={handleLike}>
                                     <i className="fa-solid fa-heart"></i>&nbsp;{liked ? 'LIKED' : 'LIKE'}
                                 </button>
                                 <button className="button is-success" onClick={() => navigate(-1)}>
                                     <i className="fa-solid fa-arrow-left"></i>&nbsp;BACK
                                 </button>
                             </div>
+
+                            {user?.username === plan.creator && (
+                                <div className="buttons is-centered">
+                                    <button className="button is-warning" onClick={() => navigate(`/create/edit/${plan.id}`)}>
+                                        <i className="fa-solid fa-pen"></i>&nbsp;EDIT
+                                    </button>
+                                    <button className="button is-danger" onClick={handleDelete}>
+                                        <i className="fa-solid fa-trash"></i>&nbsp;DELETE
+                                    </button>
+                                </div>
+                            )}
 
                         </div>
                     </div>

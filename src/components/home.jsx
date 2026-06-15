@@ -93,7 +93,7 @@ const Home = () => {
                   />
                 </a>
               </figure>
-              <a href={foods[i]?.url || '#'} target="_blank" rel="noreferrer" className="is-size-6 has-text-black">
+              <a href={foods[i]?.url || '#'} target="_blank" rel="noreferrer" className="is-size-6 has-text-weight-bold has-text-link-on-scheme">
                 {foods[i]?.name || ''}
               </a>
             </div>
