@@ -72,13 +72,13 @@ function Results() {
 
                 <div className="p-2 m-2">
 
-                    {/* Filter bar */}
+                    {/* Sort bar */}
                     <div className="is-flex is-justify-content-space-between is-align-items-center mb-4">
                         <p className="has-text-weight-semibold">Results: {`${sortedResults.length}`}</p>
                         <div className="is-flex is-align-items-center" style={{ gap: '0.5rem' }}>
-                            <label className="label mb-0" htmlFor="find-filter">Filter By:</label>
+                            <label className="label mb-0" htmlFor="find-sort">Sort By:</label>
                             <div className="select is-success">
-                                <select id="find-filter" value={filter} onChange={(event) => setFilter(event.target.value)}>
+                                <select id="find-sort" value={filter} onChange={(event) => setFilter(event.target.value)}>
                                     <option>First posted</option>
                                     <option>Last posted</option>
                                     <option>A to Z</option>
@@ -88,7 +88,6 @@ function Results() {
                         </div>
                     </div>
 
-                    {/* Code to generate results */}
                     {sortedResults.length === 0 ? (
                         <div className="has-text-centered p-4">
                             <p className="is-size-5">No meal plans found matching your filters. Click on the BACK button to search again.</p>
@@ -96,17 +95,17 @@ function Results() {
                     ) : (
                         <div className="columns is-multiline">
                             {sortedResults.map((plan) => (
-                                <div key={plan.id} className="column is-12-mobile is-half-tablet is-one-quarter-desktop">
-                                    <div className="card">
+                                <div key={plan.id} className="column is-12-mobile is-half-tablet is-one-quarter-desktop is-flex">
+                                    <div className="card" style={{ width: '100%', display: 'flex', flexDirection: 'column' }}>
                                         <div className="card-image">
                                             <figure className="image is-4by3">
                                                 <img src={plan.image} alt={plan.name} style={{ objectFit: "cover", width: "100%", height: "100%" }} />
                                             </figure>
                                         </div>
-                                        <div className="card-content has-text-centered">
+                                        <div className="card-content has-text-centered" style={{ flexGrow: 1, display: 'flex', flexDirection: 'column' }}>
                                             <p className="has-text-weight-semibold">{plan.name}</p>
-                                            <p>{`by ${plan.creator}`}</p>
-                                            <button className="button is-success is-fullwidth mt-2" onClick={() => navigate(`/view/${plan.id}`)}>
+                                            <p className="mb-2">{`by ${plan.creator}`}</p>
+                                            <button className="button is-success is-fullwidth mt-auto" onClick={() => navigate(`/view/${plan.id}`)}>
                                                 <i className="fa-solid fa-eye"></i>&nbsp;View
                                             </button>
                                         </div>
