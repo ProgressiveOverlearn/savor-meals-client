@@ -1,53 +1,116 @@
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import { useParams, useNavigate } from 'react-router-dom';
-import planData from '../data/planData';
 
-function View() {
+function View({ user }) {
 
     const { id } = useParams();
     const navigate = useNavigate();
-    const plan = planData.find((mealPlan) => mealPlan.id === parseInt(id));
+    const [plan, setPlan] = useState(null);
+    const [loading, setLoading] = useState(true);
+    const [saved, setSaved] = useState(false);
+    const [liked, setLiked] = useState(false);
+    const [error, setError] = useState(''); //errors to help the user what went wrong
 
-    const totalCalories = Array.from({ length: plan?.numberOfMeals }, (_, i) => plan[`meal${i + 1}Calories`] || 0).reduce((a, b) => a + b, 0);
-    const totalFats = Array.from({ length: plan?.numberOfMeals }, (_, i) => plan[`meal${i + 1}Fats`] || 0).reduce((a, b) => a + b, 0);
-    const totalCarbs = Array.from({ length: plan?.numberOfMeals }, (_, i) => plan[`meal${i + 1}Carbs`] || 0).reduce((a, b) => a + b, 0);
-    const totalProtein = Array.from({ length: plan?.numberOfMeals }, (_, i) => plan[`meal${i + 1}Protein`] || 0).reduce((a, b) => a + b, 0);
+useEffect(() => {
+    const fetchData = async () => {
+        try {
+            const planRes = await fetch(`http://localhost:8080/api/meal-plans/${id}`);
+            const planData = await planRes.json();
+            const fetchedPlan = Array.isArray(planData) ? planData[0] : planData;
+            setPlan(fetchedPlan);
 
-    // Check localStorage to see if already liked or saved
-    const savedPlans = JSON.parse(localStorage.getItem('savedPlans')) || [];
-    const likedPlans = JSON.parse(localStorage.getItem('likedPlans')) || [];
-    const [saved, setSaved] = useState(savedPlans.some((p) => p.id === parseInt(id)));
-    const [liked, setLiked] = useState(likedPlans.some((p) => p.id === parseInt(id)));
+            if (user?.username) {
+                const userRes = await fetch(`http://localhost:8080/api/users/${user.username}`);
+                const userData = await userRes.json();
+                
+                console.log('savedPlans:', userData.savedPlans);
+                console.log('likedPlans:', userData.likedPlans);
+                console.log('fetchedPlan._id:', fetchedPlan?._id);
 
-    const handleSave = () => {
-        const savedPlans = JSON.parse(localStorage.getItem('savedPlans')) || [];
-        if (saved) {
-            // Remove from saves
-            const updated = savedPlans.filter((p) => p.id !== plan.id);
-            localStorage.setItem('savedPlans', JSON.stringify(updated));
-            setSaved(false);
-        } else {
-            // Add to saves
-            savedPlans.push(plan);
-            localStorage.setItem('savedPlans', JSON.stringify(savedPlans));
-            setSaved(true);
+                setSaved(userData.savedPlans?.some(p => p._id === fetchedPlan?._id?.toString()));
+                setLiked(userData.likedPlans?.some(p => p._id === fetchedPlan?._id?.toString()));
+            } else {
+                setSaved(false);
+                setLiked(false);
+            }
+
+        } catch (err) {
+            console.error('❌ Error fetching data:', err);
+        } finally {
+            setLoading(false);
         }
     };
 
-    const handleLike = () => {
-        const likedPlans = JSON.parse(localStorage.getItem('likedPlans')) || [];
-        if (liked) {
-            // Remove from likes
-            const updated = likedPlans.filter((p) => p.id !== plan.id);
-            localStorage.setItem('likedPlans', JSON.stringify(updated));
-            setLiked(false);
-        } else {
-            // Add to likes
-            likedPlans.push(plan);
-            localStorage.setItem('likedPlans', JSON.stringify(likedPlans));
-            setLiked(true);
+    fetchData();
+}, [id, user?.username]);
+
+    // Compute totals from meals array
+    const totalCalories = plan?.meals?.reduce((sum, meal) => sum + meal.calories, 0) || 0;
+    const totalFats = plan?.meals?.reduce((sum, meal) => sum + meal.fats, 0) || 0;
+    const totalCarbs = plan?.meals?.reduce((sum, meal) => sum + meal.carbs, 0) || 0;
+    const totalProtein = plan?.meals?.reduce((sum, meal) => sum + meal.protein, 0) || 0;
+
+const handleSave = async () => {
+    console.log('user:', user);
+    console.log('plan._id:', plan?._id);
+    if (!user?.username) { navigate('/login'); return; }
+    try {
+        const res = await fetch(`http://localhost:8080/api/users/${user.username}/save/${plan._id}`, {
+            method: saved ? 'DELETE' : 'POST',
+        });
+        console.log('save response status:', res.status);
+        const data = await res.json();
+        console.log('save response data:', data);
+        setSaved(!saved);
+    } catch (err) {
+        console.error('❌ Error saving plan:', err);
+    }
+};
+
+const handleLike = async () => {
+    console.log('user:', user);
+    console.log('plan._id:', plan?._id);
+    if (!user?.username) { navigate('/login'); return; }
+    try {
+        const res = await fetch(`http://localhost:8080/api/users/${user.username}/like/${plan._id}`, {
+            method: liked ? 'DELETE' : 'POST',
+        });
+        console.log('like response status:', res.status);
+        const data = await res.json();
+        console.log('like response data:', data);
+        setLiked(!liked);
+    } catch (err) {
+        console.error('❌ Error liking plan:', err);
+    }
+};
+
+    const handleDelete = async () => {
+    if (!window.confirm('Are you sure you want to delete this meal plan?')) return;
+
+    try {
+        const response = await fetch(`http://localhost:8080/api/meal-plans/${plan.id}`, {
+            method: 'DELETE',
+        });
+
+        if (!response.ok) {
+            console.error('❌ Failed to delete meal plan');
+            return;
         }
-    };
+
+        console.log('🗑️ Meal plan deleted');
+        navigate('/find');
+    } catch (err) {
+        console.error('❌ Error deleting meal plan:', err);
+    }
+};
+
+    if (loading) return (
+        <main>
+            <div className="p-1 m-1 has-text-centered">
+                <p className="is-size-5">Loading meal plan...</p>
+            </div>
+        </main>
+    );
 
     if (!plan) {
         return (
@@ -74,7 +137,8 @@ function View() {
                 <div className="notification is-success is-light p-4 m-4">
 
                     <div className="has-text-centered mb-4">
-                        <h2 className="is-size-4 has-text-weight-bold">{plan.name}</h2>
+                        {/* plan name is white when in dark mode, so declaring it black to stay black */}
+                        <h2 className="is-size-4 has-text-weight-bold has-text-black">{plan.name}</h2>
                         <p><i className="fa-solid fa-circle-user"></i> {plan.creator}</p>
                     </div>
 
@@ -90,18 +154,15 @@ function View() {
 
                             {/* Meals */}
                             <div className="columns is-multiline mb-2">
-                                {Array.from({ length: plan.numberOfMeals }, (_, i) => {
-                                    const num = i + 1;
-                                    return (
-                                        <div key={num} className="column is-12-mobile is-4-tablet">
-                                            <div className="box">
-                                                <h3 className="has-text-weight-semibold mb-2">Meal {num}: {plan[`meal${num}Name`]}</h3>
-                                                <p>{plan[`meal${num}Ingredients`]}</p>
-                                                <p><strong>Calories:</strong> {plan[`meal${num}Calories`]}</p>
-                                            </div>
+                                {plan.meals.map((meal) => (
+                                    <div key={meal._id} className="column is-12-mobile is-4-tablet">
+                                        <div className="box">
+                                            <h3 className="has-text-weight-semibold mb-2">{meal.name}</h3>
+                                            <p className="mb-2">{meal.ingredients}</p>
+                                            <p><strong>Calories:</strong> {meal.calories}</p>
                                         </div>
-                                    );
-                                })}
+                                    </div>
+                                ))}
                             </div>
 
                             {/* Macronutrients */}
@@ -130,17 +191,29 @@ function View() {
                             </div>
 
                             {/* Action Buttons */}
+
                             <div className="buttons is-centered">
-                                <button className={`button ${saved ? 'is-warning' : 'is-success'}`} onClick={handleSave}>
+                                <button className={`button ${saved ? 'is-info' : 'is-success'}`} onClick={handleSave}>
                                     <i className="fa-solid fa-bookmark"></i>&nbsp;{saved ? 'SAVED' : 'SAVE'}
                                 </button>
-                                <button className={`button ${liked ? 'is-danger' : 'is-success'}`} onClick={handleLike}>
+                                <button className={`button ${liked ? 'is-info' : 'is-success'}`} onClick={handleLike}>
                                     <i className="fa-solid fa-heart"></i>&nbsp;{liked ? 'LIKED' : 'LIKE'}
                                 </button>
                                 <button className="button is-success" onClick={() => navigate(-1)}>
                                     <i className="fa-solid fa-arrow-left"></i>&nbsp;BACK
                                 </button>
                             </div>
+
+                            {user?.username === plan.creator && (
+                                <div className="buttons is-centered">
+                                    <button className="button is-warning" onClick={() => navigate(`/create/edit/${plan.id}`)}>
+                                        <i className="fa-solid fa-pen"></i>&nbsp;EDIT
+                                    </button>
+                                    <button className="button is-danger" onClick={handleDelete}>
+                                        <i className="fa-solid fa-trash"></i>&nbsp;DELETE
+                                    </button>
+                                </div>
+                            )}
 
                         </div>
                     </div>

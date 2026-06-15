@@ -37,13 +37,13 @@ function App() {
         <Route path="/discover" element={<Discover />} />
         <Route path="/account" element={<Account user={user} setUser={setUser} />} />
         <Route path="/create" element={<Create user={user} />} />
-        <Route path="/find" element={<Find />} />
+        <Route path="/create/edit/:id" element={<Create user={user} />} /> //keep the meal plan form while editing
+        <Route path="/find" element={<Find user={user} />} />
         <Route path="/login" element={<Login user={user} setUser={setUser} />} />
-        <Route path="/manage" element={<Manage user={user} />} />
         <Route path="/password" element={<Password />} />
         <Route path="/results" element={<Results />} />
         <Route path="/signup" element={<Signup user={user} setUser={setUser} />} />
-        <Route path="/view/:id" element={<View />} />
+        <Route path="/view/:id" element={<View user={user} />} />
       </Routes>
       <Footer />
     </div>
