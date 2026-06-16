@@ -11,7 +11,7 @@ const Home = () => {
   useEffect(() => {
     const fetchFoods = async () => {
       try {
-        const response = await fetch(`http://localhost:8080/api/foods-of-the-day?day=${dayNumber}`); //backend of personal project
+        const response = await fetch(`https://savor-meals-server.onrender.com/api/foods-of-the-day?day=${dayNumber}`); //backend of personal project, local link: `http://localhost:8080/api/foods-of-the-day?day=${dayNumber}`
         const data = await response.json();
         console.log(`Foods received: ${data}`);
         setFoods(data);
