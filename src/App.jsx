@@ -6,7 +6,6 @@ import Account from './components/account';
 import Create from './components/create';
 import Find from './components/find';
 import Login from './components/login';
-import Manage from './components/manage';
 import Password from './components/password';
 import Results from './components/results';
 import Signup from './components/signup';
