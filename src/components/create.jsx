@@ -22,8 +22,9 @@ function Create({ user }) {
     }
 
     useEffect(() => {
+        //local link: `http://localhost:8080/api/meal-plans/${id}`
         if (isEditing) {
-            fetch(`http://localhost:8080/api/meal-plans/${id}`)
+            fetch(`https://savor-meals-server.onrender.com/api/meal-plans/${id}`)
                 .then(res => res.json())
                 .then(data => {
                     const plan = Array.isArray(data) ? data[0] : data;
@@ -84,7 +85,8 @@ function Create({ user }) {
         setError('');
 
         try {
-            const response = await fetch('http://localhost:8080/api/nutrition/analyze', {
+            //local link: 'http://localhost:8080/api/nutrition/analyze'
+            const response = await fetch('https://savor-meals-server.onrender.com/api/nutrition/analyze', {
                 method: 'POST',
                 headers: { 'Content-Type': 'application/json' },
                 body: JSON.stringify({ type: 'text', name: meal.name, ingredients: meal.ingredients }),

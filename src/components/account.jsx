@@ -23,12 +23,12 @@ function Account({ user, setUser }) {
         const fetchUserData = async () => {
             try {
                 // Fetch posts created by this user from the backend
-                const postsResponse = await fetch(`http://localhost:8080/api/meal-plans/user/${user.username}`);
+                const postsResponse = await fetch(`https://savor-meals-server.onrender.com/api/meal-plans/user/${user.username}`); // local link: `http://localhost:8080/api/meal-plans/user/${user.username}`
                 const postsData = await postsResponse.json();
                 setUserPosts(Array.isArray(postsData) ? postsData : []);
 
                 // Fetch full user profile to get savedPlans and likedPlans
-                const userResponse = await fetch(`http://localhost:8080/api/users/${user.username}`);
+                const userResponse = await fetch(`https://savor-meals-server.onrender.com/api/users/${user.username}`); // local link: `http://localhost:8080/api/users/${user.username}`
                 const userData = await userResponse.json();
                 setSavedPlans(userData.savedPlans || []);
                 setLikedPlans(userData.likedPlans || []);
@@ -90,7 +90,8 @@ function Account({ user, setUser }) {
         setError('');
 
         try {
-            const response = await fetch(`http://localhost:8080/api/users/${user.username}`, {
+            // local link: `http://localhost:8080/api/users/${user.username}`
+            const response = await fetch(`https://savor-meals-server.onrender.com/api/users/${user.username}`, {
                 method: 'PUT',
                 headers: { 'Content-Type': 'application/json' },
                 body: JSON.stringify({ heightNumber, heightUnit, weightNumber, weightUnit, gender }),

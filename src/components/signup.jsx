@@ -61,7 +61,8 @@ function Signup({ setUser }) {
         setError('');
 
         try {
-            const response = await fetch('http://localhost:8080/api/users/register', {
+            //local link: 'http://localhost:8080/api/users/register'
+            const response = await fetch('https://savor-meals-server.onrender.com/api/users/register', {
                 method: 'POST',
                 headers: { 'Content-Type': 'application/json' },
                 body: JSON.stringify({
@@ -84,7 +85,8 @@ function Signup({ setUser }) {
             }
 
             // Auto login after signup - fetch full user profile
-            const loginResponse = await fetch('http://localhost:8080/api/users/login', {
+            //local link: 'http://localhost:8080/api/users/login'
+            const loginResponse = await fetch('https://savor-meals-server.onrender.com/api/users/login', {
                 method: 'POST',
                 headers: { 'Content-Type': 'application/json' },
                 body: JSON.stringify({ email, password }),

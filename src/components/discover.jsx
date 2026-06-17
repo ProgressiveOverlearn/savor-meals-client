@@ -11,7 +11,7 @@ const Discover = () => {
   useEffect(() => {
     const fetchFoods = async () => {
       try {
-        const response = await fetch('http://localhost:8080/api/foods');
+        const response = await fetch('https://savor-meals-server.onrender.com/api/foods'); // local link: 'http://localhost:8080/api/foods'
         const data = await response.json();
 
         // group foods by foodGroup field

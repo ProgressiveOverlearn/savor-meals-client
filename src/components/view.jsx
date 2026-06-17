@@ -14,13 +14,13 @@ function View({ user }) {
 useEffect(() => {
     const fetchData = async () => {
         try {
-            const planRes = await fetch(`http://localhost:8080/api/meal-plans/${id}`);
+            const planRes = await fetch(`https://savor-meals-server.onrender.com/api/meal-plans/${id}`); // local link: `http://localhost:8080/api/meal-plans/${id}`
             const planData = await planRes.json();
             const fetchedPlan = Array.isArray(planData) ? planData[0] : planData;
             setPlan(fetchedPlan);
 
             if (user?.username) {
-                const userRes = await fetch(`http://localhost:8080/api/users/${user.username}`);
+                const userRes = await fetch(`https://savor-meals-server.onrender.com/api/users/${user.username}`); // local link: `http://localhost:8080/api/users/${user.username}`
                 const userData = await userRes.json();
                 
                 console.log('savedPlans:', userData.savedPlans);
@@ -55,7 +55,8 @@ const handleSave = async () => {
     console.log('plan._id:', plan?._id);
     if (!user?.username) { navigate('/login'); return; }
     try {
-        const res = await fetch(`http://localhost:8080/api/users/${user.username}/save/${plan._id}`, {
+        // local link: `http://localhost:8080/api/users/${user.username}/save/${plan._id}`
+        const res = await fetch(`https://savor-meals-server.onrender.com/api/users/${user.username}/save/${plan._id}`, {
             method: saved ? 'DELETE' : 'POST',
         });
         console.log('save response status:', res.status);
@@ -72,7 +73,8 @@ const handleLike = async () => {
     console.log('plan._id:', plan?._id);
     if (!user?.username) { navigate('/login'); return; }
     try {
-        const res = await fetch(`http://localhost:8080/api/users/${user.username}/like/${plan._id}`, {
+        // local link: `http://localhost:8080/api/users/${user.username}/like/${plan._id}`
+        const res = await fetch(`https://savor-meals-server.onrender.com/api/users/${user.username}/like/${plan._id}`, {
             method: liked ? 'DELETE' : 'POST',
         });
         console.log('like response status:', res.status);
@@ -88,7 +90,8 @@ const handleLike = async () => {
     if (!window.confirm('Are you sure you want to delete this meal plan?')) return;
 
     try {
-        const response = await fetch(`http://localhost:8080/api/meal-plans/${plan.id}`, {
+        // local link: `http://localhost:8080/api/meal-plans/${plan.id}`
+        const response = await fetch(`https://savor-meals-server.onrender.com/api/meal-plans/${plan.id}`, {
             method: 'DELETE',
         });
 

@@ -16,7 +16,8 @@ function Results() {
     const caloriesRange = searchParams.get('calories');
 
         useEffect(() => {
-        fetch('http://localhost:8080/api/meal-plans')
+        //local link: 'http://localhost:8080/api/meal-plans'
+        fetch('https://savor-meals-server.onrender.com/api/meal-plans')
             .then(res => res.json())
             .then(data => {
                 setPlanData(data);
