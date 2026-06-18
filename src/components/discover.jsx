@@ -67,16 +67,18 @@ const Discover = () => {
           </p>
         </div>
 
-        <div className="mb-4" id="foods-by-group">
-          <div className="columns is-multiline has-text-centered">
-            {food.map((foodItem) => (
-              <div key={foodItem.name} className="column is-12-mobile is-half-tablet is-one-quarter-desktop">
-                <img className="image is-square" src={foodItem.imageSrc} alt={foodItem.name} />  {/* 👈 imageSrc */}
-                <p>{foodItem.name}</p>
-              </div>
-            ))}
-          </div>
-        </div>
+       <div className="mb-4" id="foods-by-group">
+  <div className="columns is-multiline has-text-centered" style={{ maxHeight: '600px', overflowY: 'auto' }}>
+    {food.map((foodItem) => (
+      <div key={foodItem.name} className="column is-12-mobile is-3-tablet is-2-desktop">
+        <figure className="image is-square">
+          <img src={foodItem.imageSrc} alt={foodItem.name} style={{ objectFit: 'cover' }} />
+        </figure>
+        <p>{foodItem.name}</p>
+      </div>
+    ))}
+  </div>
+</div>
 
       </div>
     </main>
