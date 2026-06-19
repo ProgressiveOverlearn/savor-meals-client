@@ -1,4 +1,5 @@
 import { useEffect, useState } from 'react';
+import loadingIcon from '../assets/loading.gif';
 
 const Home = () => {
   const today = new Date();
@@ -7,6 +8,7 @@ const Home = () => {
   
 
   const [foods, setFoods] = useState([]);
+  const [loading, setLoading] = useState(true);
 
   useEffect(() => {
     const fetchFoods = async () => {
@@ -17,7 +19,9 @@ const Home = () => {
         setFoods(data);
       } catch (error) {
         console.error('❌ Error fetching foods of the day:', error);
-      }
+      } finally {
+      setLoading(false);
+    }
     };
 
     fetchFoods();
@@ -96,12 +100,12 @@ const Home = () => {
               <figure className="image is-square">
                 <a href={foods[i]?.url || '#'} target="_blank" rel="noreferrer">
                   <img
-                    src={foods[i]?.image || "images/questionmark.png"} //
-                    alt={foods[i]?.name || `${day} food of the day`}
+                    src={loading ? loadingIcon : foods[i]?.image || "images/questionmark.png"} //
+                    alt={loading ? "Loading..." : foods[i]?.name || `${day} food of the day`}
                   />
                 </a>
               </figure>
-              <a href={foods[i]?.url || '#'} target="_blank" rel="noreferrer" className="is-size-6 has-text-weight-bold has-text-link-on-scheme">
+              <a href={foods[i]?.url || '#'} target="_blank" rel="noreferrer" className="is-size-6 has-text-weight-bold has-text-grey">
                 {foods[i]?.name || ''}
               </a>
             </div>

@@ -1,5 +1,6 @@
 import { useNavigate, Navigate } from "react-router-dom";
 import { useState, useEffect } from 'react';
+import loadingIcon from '../assets/loading.gif';
 
 function Account({ user, setUser }) {
 
@@ -11,9 +12,7 @@ function Account({ user, setUser }) {
     const [gender, setGender] = useState(user.gender || '');
     const [isEditing, setIsEditing] = useState(false);
     const [error, setError] = useState('');
-
-    //for the posts portion of the page
-        const [userPosts, setUserPosts] = useState([]);
+    const [userPosts, setUserPosts] = useState([]);
     const [savedPlans, setSavedPlans] = useState([]);
     const [likedPlans, setLikedPlans] = useState([]);
     const [loading, setLoading] = useState(true);
@@ -46,7 +45,8 @@ function Account({ user, setUser }) {
     if (loading) return (
         <main>
             <div className="p-1 m-1 has-text-centered">
-                <p className="is-size-5">Loading your activity...</p>
+                <p className="is-size-5">Cooking up your account dashboard, be patient!</p>
+                <img src={loadingIcon} alt={"Loading"} width="50%"/>
             </div>
         </main>
     );

@@ -1,5 +1,6 @@
 import { useNavigate } from "react-router-dom";
 import { useState, useEffect } from 'react';
+import loadingIcon from '../assets/loading.gif';
 
 function Find() {
 
@@ -75,7 +76,7 @@ function Find() {
                             <h3 className="is-size-5 has-text-weight-semibold mb-3 has-text-centered">Filters</h3>
 
                             <div className="field">
-                                <label className="label" htmlFor="health-goals">Health goal:</label>
+                                <label className="label has-text-black" htmlFor="health-goals">Health goal:</label>
                                 <div className="control">
                                     <div className="select is-fullwidth">
                                         <select id="health-goals" value={healthGoal} onChange={(event) => setHealthGoal(event.target.value)}>
@@ -98,7 +99,7 @@ function Find() {
                             </div>
 
                             <div className="field">
-                                <label className="label" htmlFor="number-meals">Number of meals:</label>
+                                <label className="label has-text-black" htmlFor="number-meals">Number of meals:</label>
                                 <div className="control">
                                     <div className="select is-fullwidth">
                                         <select id="number-meals" value={numberOfMeals} onChange={(event) => setNumberOfMeals(event.target.value)}>
@@ -115,7 +116,7 @@ function Find() {
                             </div>
 
                             <div className="field">
-                                <label className="label" htmlFor="calories-range">Calories range:</label>
+                                <label className="label has-text-black" htmlFor="calories-range">Calories range:</label>
                                 <div className="control">
                                     <div className="select is-fullwidth">
                                         <select id="calories-range" value={caloriesRange} onChange={(event) => setCaloriesRange(event.target.value)}>
@@ -154,13 +155,17 @@ function Find() {
                         </div>
 
                         {loading ? (
+                            // what you see while meal plans are loading
                             <div className="has-text-centered p-4">
-                                <p className="is-size-5">Loading meal plans...</p>
+                                <p className="is-size-5 mb-2">Hang tight. Soon, you'll see meal plans to be inspired from!</p>
+                                <img src={loadingIcon} alt="loading icon" width="50%"/>
                             </div>
+                            // if no plans are found
                         ) : sortedResults.length === 0 ? (
                             <div className="has-text-centered p-4">
-                                <p className="is-size-5">No meal plans found matching your filters.</p>
-                            </div>
+                                <p className="is-size-5">No meal plans found matching your filters. Try another one!</p>
+                                </div>
+                            // if meal plans are detected!
                         ) : (
                             <div style={{ maxHeight: '800px', overflowY: 'auto', paddingRight: '0.5rem' }}>
                                 <div className="columns is-multiline">

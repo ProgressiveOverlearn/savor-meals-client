@@ -122,7 +122,7 @@ function Signup({ setUser }) {
                             <p className="has-text-centered mb-4 is-size-7">✱ Required fields</p>
 
                             <div className="field">
-                                <label className="label has-text-centered" htmlFor="email">Email Address ✱</label>
+                                <label className="label has-text-centered has-text-black" htmlFor="email">Email Address ✱</label>
                                 <div className="control has-icons-left">
                                     <input className="input" type="email" id="email" name="email" placeholder="Email" value={email} onChange={(event) => setEmail(event.target.value)} required />
                                     <span className="icon is-left">
@@ -132,7 +132,7 @@ function Signup({ setUser }) {
                             </div>
 
                             <div className="field">
-                                <label className="label has-text-centered" htmlFor="password">Create a Password ✱</label>
+                                <label className="label has-text-centered has-text-black" htmlFor="password">Create a Password ✱</label>
                                 <div className="control has-icons-left">
                                     <input className="input" type="password" id="password" name="password" placeholder="Password" value={password} onChange={(event) => setPassword(event.target.value)} required />
                                     <span className="icon is-left">
@@ -142,7 +142,7 @@ function Signup({ setUser }) {
                             </div>
 
                             <div className="field">
-                                <label className="label has-text-centered" htmlFor="username">Username ✱</label>
+                                <label className="label has-text-centered has-text-black" htmlFor="username">Username ✱</label>
                                 <div className="control has-icons-left">
                                     <input className="input" type="text" id="username" name="username" placeholder="Ex: fitmaster1" value={username} onChange={(event) => setUsername(event.target.value)} required />
                                     <span className="icon is-left">
@@ -160,7 +160,7 @@ function Signup({ setUser }) {
 
                             {/* Height */}
                             <div className="field">
-                                <label className="label has-text-centered" htmlFor="height">Your Height</label>
+                                <label className="label has-text-centered has-text-black" htmlFor="height">Your Height</label>
                                 <div className="columns is-mobile">
                                     <div className="column">
                                         <div className="control">
@@ -184,7 +184,7 @@ function Signup({ setUser }) {
 
                             {/* Weight */}
                             <div className="field">
-                                <label className="label has-text-centered" htmlFor="weight">Your Weight</label>
+                                <label className="label has-text-centered has-text-black" htmlFor="weight">Your Weight</label>
                                 <div className="columns is-mobile">
                                     <div className="column">
                                         <div className="control">
@@ -209,7 +209,7 @@ function Signup({ setUser }) {
 
                             {/* Gender */}
                             <div className="field">
-                                <label className="label has-text-centered" htmlFor="gender">Your Gender</label>
+                                <label className="label has-text-centered has-text-black" htmlFor="gender">Your Gender</label>
                                 <div className="control has-text-centered">
                                     <div className="select is-success">
                                         <select id="gender" name="gender" value={gender} onChange={(event) => setGender(event.target.value)}>

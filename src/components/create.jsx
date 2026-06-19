@@ -354,7 +354,6 @@ function Create({ user }) {
 
                 </div>
 
-                {/* Dynamic Mobile-Optimized Meal Forms Container */}
                 <div style={{ maxHeight: '700px', overflowY: 'auto', padding: '0.25rem' }}>
                     {meals.map((meal, index) => {
                         const isExpanded = expandedMeal === index;
@@ -383,7 +382,7 @@ function Create({ user }) {
                                             {/* Left Column: Form Details & Macro Grid */}
                                             <div className="column is-half-tablet">
                                                 <div className="field">
-                                                    <label className="label">Meal Name:</label>
+                                                    <label className="label has-text-black">Meal Name:</label>
                                                     <input
                                                         className="input"
                                                         type="text"
@@ -393,7 +392,7 @@ function Create({ user }) {
                                                     />
                                                 </div>
 
-                                                <p className="has-text-weight-semibold mb-2">
+                                                <p className="has-text-weight-semibold mb-2 has-text-black">
                                                     Nutrition Info <span className="is-size-7 has-text-grey">(auto-filled or enter manually)</span>
                                                     {justUpdated === index && (
                                                         <span className="has-text-success ml-2">
@@ -406,25 +405,25 @@ function Create({ user }) {
                                                 <div className="columns is-mobile is-multiline">
                                                     <div className="column is-6-mobile is-3-tablet">
                                                         <div className="field">
-                                                            <label className="label">Calories:</label>
+                                                            <label className="label has-text-black">Calories:</label>
                                                             <input className="input" type="number" placeholder="e.g. 445" value={meal.calories} disabled />
                                                         </div>
                                                     </div>
                                                     <div className="column is-6-mobile is-3-tablet">
                                                         <div className="field">
-                                                            <label className="label">Fats (g):</label>
+                                                            <label className="label has-text-black">Fats (g):</label>
                                                             <input className="input" type="number" placeholder="e.g. 5" value={meal.fats} onChange={(event) => handleMealChange(index, 'fats', event.target.value)} />
                                                         </div>
                                                     </div>
                                                     <div className="column is-6-mobile is-3-tablet">
                                                         <div className="field">
-                                                            <label className="label">Carbs (g):</label>
+                                                            <label className="label has-text-black">Carbs (g):</label>
                                                             <input className="input" type="number" placeholder="e.g. 80" value={meal.carbs} onChange={(event) => handleMealChange(index, 'carbs', event.target.value)} />
                                                         </div>
                                                     </div>
                                                     <div className="column is-6-mobile is-3-tablet">
                                                         <div className="field">
-                                                            <label className="label">Protein (g):</label>
+                                                            <label className="label has-text-black">Protein (g):</label>
                                                             <input className="input" type="number" placeholder="e.g. 25" value={meal.protein} onChange={(event) => handleMealChange(index, 'protein', event.target.value)} />
                                                         </div>
                                                     </div>
@@ -433,7 +432,7 @@ function Create({ user }) {
 
                                             {/* Right Column: Toggle Mode Component Area */}
                                             <div className="column is-half-tablet">
-                                                <label className="label">Get Nutrition Info With:</label>
+                                                <label className="label has-text-black">Get Nutrition Info With:</label>
                                                 <div className="buttons has-addons mb-2 is-centered">
                                                     <button 
                                                         type="button"
@@ -453,7 +452,7 @@ function Create({ user }) {
 
                                                 {inputMode === 'text' ? (
                                                     <div className="field">
-                                                        <label className="label">Measured Ingredients:</label>
+                                                        <label className="label has-text-black">Measured Ingredients:</label>
                                                         <textarea
                                                             className="input mb-2"
                                                             style={{ height: "120px" }} 

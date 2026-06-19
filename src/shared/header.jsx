@@ -9,7 +9,7 @@ return (
     <header>
         <nav className="navbar has-background-success-40 has-shadow">
             <div className="navbar-brand p-3 m-1">
-                <img src="images/SAVOR MEALS.png" alt="website logo" width="80" height="auto" />
+                <a href="/"><img src="images/SAVOR MEALS.png" alt="website logo" width="80" height="auto" /></a>
                 <a role="button" className="navbar-burger has-text-white" onClick={() => setIsMenuOpen(!isMenuOpen)}>
                     <i className={`fa-solid ${isMenuOpen ? 'fa-xmark' : 'fa-bars'}`}></i>
                 </a>
