@@ -92,7 +92,7 @@ function Account({ user, setUser }) {
         try {
             // local link: `http://localhost:8080/api/users/${user.username}`
             const response = await fetch(`https://savor-meals-server.onrender.com/api/users/${user.username}`, {
-                method: 'PUT',
+                method: 'PATCH',
                 headers: { 'Content-Type': 'application/json' },
                 body: JSON.stringify({ heightNumber, heightUnit, weightNumber, weightUnit, gender }),
             });
