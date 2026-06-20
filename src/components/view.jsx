@@ -122,7 +122,7 @@ function View({ user }) {
 
                     {/* Navigation Actions Row */}
                     <div className="is-flex is-justify-content-space-between is-align-items-center mb-4">
-                        <button className="button is-success" onClick={() => navigate(-1)}>
+                        <button className="button is-success" onClick={() => navigate('/find')}>
                             <i className="fa-solid fa-arrow-left"></i>&nbsp;BACK
                         </button>
                         {error && <p className="has-text-danger has-text-weight-semibold is-size-7">{error}</p>}

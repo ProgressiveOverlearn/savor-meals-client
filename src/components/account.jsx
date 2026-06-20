@@ -144,185 +144,180 @@ function Account({ user, setUser }) {
                     <h2 className="p-1 m-1 is-size-5">Welcome, {user.username}!</h2>
                 </div>
 
-                <div className="p-2 m-2">
-                    <div className="columns is-multiline">
+            <div className="p-2">
+                <div className="columns is-multiline mb-1">
 
-                        {/* Profile Info */}
-                        <div className="column is-12-mobile is-6-tablet">
-                            <div className="notification is-success is-light has-text-centered" style={{ height: '100%' }}>
-                                <h3 className="is-size-5 has-text-weight-semibold mb-3">
-                                    <i className="fa-solid fa-circle-user"></i> Profile
-                                </h3>
-                                <p><strong>Username:</strong> {user.username}</p>
-                                <button className="button is-success mt-3" onClick={handleLogout}>
-                                        <i className="fa-solid fa-arrow-right-from-bracket"></i>&nbsp;Logout
-                                    </button>
-                            </div>
-                        </div>
+                {/* Profile information */}
+                <div className="column is-12-mobile is-6-tablet is-3-desktop">
+                    <div className="notification is-success is-light has-text-centered" style={{ height: '100%' }}>
 
-                        {/* Body Measurements */}
-                        <div className="column is-12-mobile is-6-tablet">
-                            <div className="notification is-success is-light has-text-centered">
-                                <h3 className="is-size-5 has-text-weight-semibold mb-3">
-                                    <i className="fa-solid fa-weight-scale"></i> Body Measurements
-                                </h3>
+                        <h3 className="is-size-5 has-text-weight-semibold mb-3">
+                            <i className="fa-solid fa-circle-user"></i> User Information
+                        </h3>
+                        <p><strong>Username:</strong> {user.username}</p>
 
-                                {isEditing ? (
-                                    <>
-                                        <div className="field">
-                                            <label className="label">Height</label>
-                                            <div className="columns is-mobile">
-                                                <div className="column">
-                                                    <div className="control">
-                                                        <input className="input" type="number" placeholder="Height number" value={heightNumber} onChange={(event) => setHeightNumber(event.target.value)} />
-                                                    </div>
-                                                </div>
-                                                <div className="column is-narrow">
-                                                    <div className="control">
-                                                        <div className="select is-success">
-                                                            <select value={heightUnit} onChange={(event) => setHeightUnit(event.target.value)}>
-                                                                <option value="" disabled>Select unit</option>
-                                                                <option value="inches">inches</option>
-                                                                <option value="centimeters">centimeters</option>
-                                                                <option value="">Don't provide</option>
-                                                            </select>
-                                                        </div>
-                                                    </div>
-                                                </div>
-                                            </div>
+                        {isEditing ? (
+                            <>
+                                <div className="field">
+                                    <label className="label">Height:</label>
+                                    <div className="field has-addons" style={{ justifyContent: 'center' }}>
+                                        <div className="control is-expanded">
+                                            <input
+                                                className="input"
+                                                type="number"
+                                                placeholder="Height number"
+                                                value={heightNumber}
+                                                onChange={(event) => setHeightNumber(event.target.value)}
+                                            />
                                         </div>
-
-                                        <div className="field">
-                                            <label className="label">Weight</label>
-                                            <div className="columns is-mobile">
-                                                <div className="column">
-                                                    <div className="control">
-                                                        <input className="input" type="number" placeholder="Weight number" value={weightNumber} onChange={(event) => setWeightNumber(event.target.value)} />
-                                                    </div>
-                                                </div>
-                                                <div className="column is-narrow">
-                                                    <div className="control">
-                                                        <div className="select is-success">
-                                                            <select value={weightUnit} onChange={(event) => setWeightUnit(event.target.value)}>
-                                                                <option value="" disabled>Select unit</option>
-                                                                <option value="pounds">pounds</option>
-                                                                <option value="kilograms">kilograms</option>
-                                                                <option value="stones">stones</option>
-                                                                <option value="">Don't provide</option>
-                                                            </select>
-                                                        </div>
-                                                    </div>
-                                                </div>
-                                            </div>
-                                        </div>
-
-                                        <div className="control has-text-centered">
-                                            <label className="label">Gender</label>
+                                        <div className="control">
                                             <div className="select is-success">
-                                                <select id="gender" name="gender" value={gender} onChange={(event) => setGender(event.target.value)}>
-                                                    <option value="" disabled>Select gender</option>
-                                                    <option value="Male">Male</option>
-                                                    <option value="Female">Female</option>
-                                                    <option value="Non-binary">Non-binary</option>
+                                                <select value={heightUnit} onChange={(event) => setHeightUnit(event.target.value)}>
+                                                    <option value="" disabled>Select unit</option>
+                                                    <option value="inches">inches</option>
+                                                    <option value="centimeters">centimeters</option>
                                                     <option value="">Don't provide</option>
                                                 </select>
                                             </div>
                                         </div>
+                                    </div>
+                                </div>
 
-                                        {error && <p className="has-text-danger has-text-centered mt-2 mb-2">{error}</p>}
-
-                                        <div className="mt-3 is-flex" style={{ gap: '0.5rem', justifyContent: 'center' }}>
-                                            <button className="button is-success" onClick={updateBodyMeasurements}>
-                                                <i className="fa-solid fa-check"></i>&nbsp;Save
-                                            </button>
-                                            <button className="button" onClick={() => setIsEditing(false)}>Cancel</button>
+                                <div className="field">
+                                    <label className="label">Weight:</label>
+                                    <div className="field has-addons" style={{ justifyContent: 'center' }}>
+                                        <div className="control is-expanded">
+                                            <input
+                                                className="input"
+                                                type="number"
+                                                placeholder="Weight number"
+                                                value={weightNumber}
+                                                onChange={(event) => setWeightNumber(event.target.value)}
+                                            />
                                         </div>
-                                    </>
-
-                                ) : (
-                                    <>
-                                        <p><strong>Height:</strong> {user.heightNumber && user.heightUnit ? `${user.heightNumber} ${user.heightUnit}` : user.height || 'Not provided'}</p>
-                                        <p><strong>Weight:</strong> {user.weightNumber && user.weightUnit ? `${user.weightNumber} ${user.weightUnit}` : user.weight || 'Not provided'}</p>
-                                        <p><strong>Gender:</strong> {user.gender || 'Not provided'}</p>
-                                        <div className="mt-3">
-                                            <button className="button is-success" onClick={() => setIsEditing(true)}>
-                                                <i className="fa-solid fa-pen"></i>&nbsp;Change
-                                            </button>
+                                        <div className="control">
+                                            <div className="select is-success">
+                                                <select value={weightUnit} onChange={(event) => setWeightUnit(event.target.value)}>
+                                                    <option value="" disabled>Select unit</option>
+                                                    <option value="pounds">pounds</option>
+                                                    <option value="kilograms">kilograms</option>
+                                                    <option value="stones">stones</option>
+                                                    <option value="">Don't provide</option>
+                                                </select>
+                                            </div>
                                         </div>
-                                    </>
-                                )}
-                            </div>
+                                    </div>
+                                </div>
+
+                                <div className="field">
+                                    <label className="label">Gender:</label>
+                                    <div className="control">
+                                        <div className="select is-success">
+                                            <select id="gender" name="gender" value={gender} onChange={(event) => setGender(event.target.value)}>
+                                                <option value="" disabled>Select gender</option>
+                                                <option value="Male">Male</option>
+                                                <option value="Female">Female</option>
+                                                <option value="Non-binary">Non-binary</option>
+                                                <option value="">Don't provide</option>
+                                            </select>
+                                        </div>
+                                    </div>
+                                </div>
+
+                                {error && <p className="has-text-danger has-text-centered mt-2 mb-2">{error}</p>}
+
+                                <div className="mt-3 is-flex" style={{ gap: '0.5rem', justifyContent: 'center' }}>
+                                    <button className="button is-success" onClick={updateBodyMeasurements}>
+                                        <i className="fa-solid fa-check"></i>&nbsp;Save
+                                    </button>
+                                    <button className="button" onClick={() => setIsEditing(false)}>Cancel</button>
+                                </div>
+                            </>
+                        ) : (
+                            <>
+                                <p><strong>Height:</strong> {user.heightNumber && user.heightUnit ? `${user.heightNumber} ${user.heightUnit}` : user.height || 'Not provided'}</p>
+                                <p><strong>Weight:</strong> {user.weightNumber && user.weightUnit ? `${user.weightNumber} ${user.weightUnit}` : user.weight || 'Not provided'}</p>
+                                <p><strong>Gender:</strong> {user.gender || 'Not provided'}</p>
+                                <div className="mt-3 is-flex" style={{ gap: '0.5rem', justifyContent: 'center' }}>
+                                    <button className="button is-success" onClick={() => setIsEditing(true)}>
+                                        <i className="fa-solid fa-pen"></i>&nbsp;Change
+                                    </button>
+                                    <button className="button is-success is-warning" onClick={handleLogout}>
+                                        <i className="fa-solid fa-arrow-right-from-bracket"></i>&nbsp;Logout
+                                    </button>
+                                </div>
+                            </>
+                        )}
+                    </div>
+                </div>
+
+                {/* Posts */}
+                <div className="column is-12-mobile is-6-tablet is-3-desktop">
+                    <div className="notification is-success is-light has-text-centered" style={{ height: '100%' }}>
+                        <h3 className="is-size-5 has-text-weight-semibold mb-3">
+                            <i className="fa-solid fa-file-lines"></i> Posts: {userPosts.length}
+                        </h3>
+                        <div className="is-flex is-flex-direction-column" style={{ gap: '0.5rem', overflowY: 'auto', height: '300px' }}>
+                            {userPosts.length === 0 ? (
+                                <p className="is-size-7 has-text-grey">No posts yet.</p>
+                            ) : (
+                                userPosts.map((plan) => (
+                                    <button key={plan.id} className="button is-success is-light is-fullwidth" onClick={() => navigate(`/view/${plan.id}`)}>
+                                        <img src={plan.image} width="10%"></img>
+                                        {plan.name}
+                                    </button>
+                                ))
+                            )}
                         </div>
                     </div>
                 </div>
 
+                {/* Saves */}
+                <div className="column is-12-mobile is-6-tablet is-3-desktop">
+                    <div className="notification is-success is-light has-text-centered" style={{ height: '100%' }}>
+                        <h3 className="is-size-5 has-text-weight-semibold mb-3">
+                            <i className="fa-solid fa-bookmark"></i> Saves: {savedPlans.length}
+                        </h3>
+                        <div className="is-flex is-flex-direction-column" style={{ gap: '0.5rem', overflowY: 'auto', height: '300px' }}>
+                            {savedPlans.length === 0 ? (
+                                <p className="is-size-7 has-text-grey">No saves yet.</p>
+                            ) : (
+                                savedPlans.map((plan) => (
+                                    <button key={plan.id || plan._id} className="button is-success is-light is-fullwidth" onClick={() => navigate(`/view/${plan.id || plan._id}`)}>
+                                        <img src={plan.image} width="10%"></img>
+                                        {plan.name}
+                                    </button>
+                                ))
+                            )}
+                        </div>
+                    </div>
+                </div>
+
+                {/* Likes */}
+                <div className="column is-12-mobile is-6-tablet is-3-desktop">
+                    <div className="notification is-success is-light has-text-centered" style={{ height: '100%' }}>
+                        <h3 className="is-size-5 has-text-weight-semibold mb-3">
+                            <i className="fa-solid fa-heart"></i> Likes: {likedPlans.length}
+                        </h3>
+                        <div className="is-flex is-flex-direction-column" style={{ gap: '0.5rem', overflowY: 'auto', height: '300px' }}>
+                            {likedPlans.length === 0 ? (
+                                <p className="is-size-7 has-text-grey">No likes yet.</p>
+                            ) : (
+                                likedPlans.map((plan) => (
+                                    <button key={plan.id || plan._id} className="button is-success is-light is-fullwidth" onClick={() => navigate(`/view/${plan.id || plan._id}`)}>
+                                        <img src={plan.image} width="10%"></img>
+                                        {plan.name}
+                                    </button>
+                                ))
+                            )}
+                        </div>
+                    </div>
+                </div>
+
+                </div>
             </div>
 
-            <div className="p-2 m-2">
-                    <div className="columns is-multiline mb-2">
-
-                        {/* Posts */}
-                        <div className="column is-12-mobile is-4-tablet has-text-centered">
-                            <div className="notification is-success is-light">
-                                <h3 className="is-size-5 has-text-weight-semibold mb-3">
-                                    <i className="fa-solid fa-file-lines"></i> Posts: {userPosts.length}
-                                </h3>
-                                <div className="is-flex is-flex-direction-column" style={{ gap: '0.5rem', overflowY: 'auto', height: '300px' }}>
-                                    {userPosts.length === 0 ? (
-                                        <p className="is-size-7 has-text-grey">No posts yet.</p>
-                                    ) : (
-                                        userPosts.map((plan) => (
-                                            <button key={plan.id} className="button is-success is-light is-fullwidth" onClick={() => navigate(`/view/${plan.id}`)}>
-                                                {plan.name}
-                                            </button>
-                                        ))
-                                    )}
-                                </div>
-                            </div>
-                        </div>
-
-                        {/* Saves */}
-                        <div className="column is-12-mobile is-4-tablet has-text-centered">
-                            <div className="notification is-success is-light">
-                                <h3 className="is-size-5 has-text-weight-semibold mb-3">
-                                    <i className="fa-solid fa-bookmark"></i> Saves: {savedPlans.length}
-                                </h3>
-                                <div className="is-flex is-flex-direction-column" style={{ gap: '0.5rem', overflowY: 'auto', height: '300px' }}>
-                                    {savedPlans.length === 0 ? (
-                                        <p className="is-size-7 has-text-grey">No saves yet.</p>
-                                    ) : (
-                                        savedPlans.map((plan) => (
-                                            <button key={plan.id || plan._id} className="button is-success is-light is-fullwidth" onClick={() => navigate(`/view/${plan.id || plan._id}`)}>
-                                                {plan.name}
-                                            </button>
-                                        ))
-                                    )}
-                                </div>
-                            </div>
-                        </div>
-
-                        {/* Likes */}
-                        <div className="column is-12-mobile is-4-tablet has-text-centered">
-                            <div className="notification is-success is-light">
-                                <h3 className="is-size-5 has-text-weight-semibold mb-3">
-                                    <i className="fa-solid fa-heart"></i> Likes: {likedPlans.length}
-                                </h3>
-                                <div className="is-flex is-flex-direction-column" style={{ gap: '0.5rem', overflowY: 'auto', height: '300px' }}>
-                                    {likedPlans.length === 0 ? (
-                                        <p className="is-size-7 has-text-grey">No likes yet.</p>
-                                    ) : (
-                                        likedPlans.map((plan) => (
-                                            <button key={plan.id || plan._id} className="button is-success is-light is-fullwidth" onClick={() => navigate(`/view/${plan.id || plan._id}`)}>
-                                                {plan.name}
-                                            </button>
-                                        ))
-                                    )}
-                                </div>
-                            </div>
-                        </div>
-
-                    </div>
-                </div>
+            </div>
         </main>
     );
 }
