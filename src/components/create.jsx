@@ -51,7 +51,7 @@ function Create({ user }) {
                         carbs: meal.carbs,
                         protein: meal.protein,
                         calories: meal.calories,
-                        inputMode: meal.ingredients ? 'text' : 'image', // dynamic fallback guess
+                        inputMode: meal.ingredients ? 'text' : 'image',
                         imageFile: null,
                         imagePreview: null
                     })));
@@ -102,14 +102,17 @@ function Create({ user }) {
         const meal = meals[index];
         const isTextMode = meal.inputMode === 'text';
 
-        // Validation based on the chosen mode
-        if (isTextMode && !meal.ingredients) {
-            setError(`Please enter ingredients for Meal ${index + 1} before getting nutrition info.`);
-            return;
-        }
-        if (!isTextMode && !meal.imageFile) {
-            setError(`Please upload an image for Meal ${index + 1} before getting nutrition info.`);
-            return;
+        //validation before getting nutrition info
+        if (isTextMode) {
+            if (!meal.ingredients) {
+                setError(`Please enter the ingredients for Meal ${index + 1} before getting nutrition info.`);
+                return;
+            }
+        } else {
+            if (!meal.imageFile) {
+                setError(`Please select or upload a new image for Meal ${index + 1} to run a new analysis.`);
+                return;
+            }
         }
 
         setLoadingNutrition(index);
@@ -120,21 +123,21 @@ function Create({ user }) {
 
             if (isTextMode) {
                 // Text Analyzer Route
-                response = await fetch('https://savor-meals-server.onrender.com/api/nutrition/analyze', {
+                response = await fetch('https://savor-meals-server.onrender.com/api/meals/analyze', {
                     method: 'POST',
                     headers: { 'Content-Type': 'application/json' },
                     body: JSON.stringify({ type: 'text', name: meal.name, ingredients: meal.ingredients }),
                 });
             } else {
-                // Image Analyzer Route - uses Multipart/FormData payload
+                // Image Analyzer Route
                 const formData = new FormData();
                 formData.append('type', 'image');
                 formData.append('name', meal.name);
-                formData.append('mealImage', meal.imageFile); // Matches common multer multi-part handling
+                formData.append('mealImage', meal.imageFile); // for multer multi-part handling
 
-                response = await fetch('https://savor-meals-server.onrender.com/api/nutrition/analyze', {
+                response = await fetch('https://savor-meals-server.onrender.com/api/meals/analyze', {
                     method: 'POST',
-                    body: formData, // Browser sets Content-Type boundary automatically
+                    body: formData,
                 });
             }
 
@@ -151,6 +154,11 @@ function Create({ user }) {
             updatedMeals[index].carbs = data.carbs || 0;
             updatedMeals[index].protein = data.protein || 0;
             updatedMeals[index].calories = (data.fats * 9) + (data.carbs * 4) + (data.protein * 4);
+
+            if (meal.inputMode === 'image' && data.ingredients) {
+            updatedMeals[index].ingredients = data.ingredients;
+            }
+
             setMeals(updatedMeals);
 
             setJustUpdated(index);
@@ -207,7 +215,7 @@ function Create({ user }) {
             totalCalories: currentCalories,
             meals: meals.map(meal => ({
                 name: meal.name,
-                ingredients: meal.inputMode === 'text' ? meal.ingredients : '[Analyzed Photo]', 
+                ingredients: meal.ingredients || '[Analyzed Photo]', 
                 fats: parseFloat(meal.fats) || 0,
                 carbs: parseFloat(meal.carbs) || 0,
                 protein: parseFloat(meal.protein) || 0,
@@ -218,10 +226,10 @@ function Create({ user }) {
         try {
             const url = isEditing
                 ? `https://savor-meals-server.onrender.com/api/meal-plans/${id}`
-                : 'https://savor-meals-server.onrender.com/api/meal-plans/save-plan';
+                : 'https://savor-meals-server.onrender.com/api/meal-plans/post-plan';
 
             const response = await fetch(url, {
-                method: isEditing ? 'PUT' : 'POST',
+                method: isEditing ? 'PATCH' : 'POST',
                 headers: { 'Content-Type': 'application/json' },
                 body: JSON.stringify(planData),
             });
@@ -430,7 +438,6 @@ function Create({ user }) {
                                                 </div>
                                             </div>
 
-                                            {/* Right Column: Toggle Mode Component Area */}
                                             <div className="column is-half-tablet">
                                                 <label className="label has-text-black">Get Nutrition Info With:</label>
                                                 <div className="buttons has-addons mb-2 is-centered">
@@ -462,36 +469,53 @@ function Create({ user }) {
                                                         />
                                                     </div>
                                                 ) : (
-                                                    <div className="field">
-                                                        <label className="label">Upload Meal Photo:</label>
-                                                        <div className="file is-boxed is-success is-fullwidth mb-2">
-                                                            <label className="file-label" style={{ display: 'flex', flexDirection: 'column', alignItems: 'center' }}>
-                                                                <input 
-                                                                    className="file-input" 
-                                                                    type="file" 
-                                                                    accept="image/*"
-                                                                    onChange={(event) => {
-                                                                        const file = event.target.files[0];
-                                                                        if (file) {
-                                                                            handleMealChange(index, 'imageFile', file);
-                                                                            handleMealChange(index, 'imagePreview', URL.createObjectURL(file));
-                                                                        }
-                                                                    }}
-                                                                />
-                                                                <span className="file-cta has-text-centered" style={{ width: '100%', height: meal.imagePreview ? '55px' : '120px', justifyContent: 'center' }}>
-                                                                    <span className="file-icon mx-auto">
-                                                                        <i className="fa-solid fa-upload"></i>
-                                                                    </span>
-                                                                    <span className="file-label">
-                                                                        {meal.imageFile ? meal.imageFile.name : "Choose a photo..."}
-                                                                    </span>
+                                                <div className="field">
+                                                    <label className="label">Upload Meal Photo:</label>
+                                                    
+
+                                                    <div className="file is-boxed is-success is-fullwidth mb-2">
+                                                        <label className="file-label" style={{ display: 'flex', flexDirection: 'column', alignItems: 'center' }}>
+                                                            <input 
+                                                                className="file-input" 
+                                                                type="file" 
+                                                                accept="image/*"
+                                                                onChange={(event) => {
+                                                                    const file = event.target.files[0];
+                                                                    if (file) {
+                                                                        handleMealChange(index, 'imageFile', file);
+                                                                        handleMealChange(index, 'imagePreview', URL.createObjectURL(file));
+                                                                    }
+                                                                }}
+                                                            />
+                                                            <span className="file-cta has-text-centered" style={{ width: '100%', height: meal.imagePreview ? '55px' : '120px', justifyContent: 'center' }}>
+                                                                <span className="file-icon mx-auto">
+                                                                    <i className="fa-solid fa-upload"></i>
                                                                 </span>
-                                                            </label>
-                                                        </div>
+                                                                <span className="file-label">
+                                                                    {meal.imageFile ? meal.imageFile.name : "Choose a photo..."}
+                                                                </span>
+                                                            </span>
+                                                        </label>
+                                                    </div>
 
                                                         {meal.imagePreview && (
                                                             <div className="image mb-2" style={{ overflow: 'hidden', borderRadius: '4px', maxHeight: '120px' }}>
                                                                 <img src={meal.imagePreview} alt="Meal preview" style={{ objectFit: 'cover', height: '120px', width: '100%' }} />
+                                                            </div>
+                                                        )}
+
+                                                        {meal.ingredients && (
+                                                            <div className="field mt-2">
+                                                                <label className="label is-small has-text-black">Detected Ingredients:</label>
+                                                                <div className="control">
+                                                                    <textarea 
+                                                                        className="textarea is-small" 
+                                                                        rows="2"
+                                                                        value={meal.ingredients} 
+                                                                        onChange={(event) => handleMealChange(index, 'ingredients', event.target.value)}
+                                                                        placeholder="Extracted ingredient text..."
+                                                                    />
+                                                                </div>
                                                             </div>
                                                         )}
                                                     </div>
