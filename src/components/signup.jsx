@@ -161,22 +161,18 @@ function Signup({ setUser }) {
                             {/* Height */}
                             <div className="field">
                                 <label className="label has-text-centered has-text-black" htmlFor="height">Your Height</label>
-                                <div className="columns is-mobile">
-                                    <div className="column">
-                                        <div className="control">
-                                            <input className="input" type="number" id="height" name="height" placeholder="Height number" value={heightNumber} onChange={(event) => setHeightNumber(event.target.value)} />
-                                        </div>
+                                <div className="field has-addons">
+                                    <div className="control is-expanded">
+                                        <input className="input" type="number" id="height" name="height" placeholder="Height number" value={heightNumber} onChange={(event) => setHeightNumber(event.target.value)} />
                                     </div>
-                                    <div className="column is-narrow">
-                                        <div className="control">
-                                            <div className="select is-success">
-                                                <select value={heightUnit} onChange={(event) => setHeightUnit(event.target.value)}>
-                                                    <option value="" disabled>Select a unit</option>
-                                                    <option value="inches">inches</option>
-                                                    <option value="centimeters">centimeters</option>
-                                                    <option value="">Don't provide</option>
-                                                </select>
-                                            </div>
+                                    <div className="control">
+                                        <div className="select is-success">
+                                            <select value={heightUnit} onChange={(event) => setHeightUnit(event.target.value)}>
+                                                <option value="" disabled>Select a unit</option>
+                                                <option value="inches">inches</option>
+                                                <option value="centimeters">centimeters</option>
+                                                <option value="">Don't provide</option>
+                                            </select>
                                         </div>
                                     </div>
                                 </div>
@@ -185,23 +181,19 @@ function Signup({ setUser }) {
                             {/* Weight */}
                             <div className="field">
                                 <label className="label has-text-centered has-text-black" htmlFor="weight">Your Weight</label>
-                                <div className="columns is-mobile">
-                                    <div className="column">
-                                        <div className="control">
-                                            <input className="input" type="number" id="weight" name="weight" placeholder="Weight number" value={weightNumber} onChange={(event) => setWeightNumber(event.target.value)} />
-                                        </div>
+                                <div className="field has-addons">
+                                    <div className="control is-expanded">
+                                        <input className="input" type="number" id="weight" name="weight" placeholder="Weight number" value={weightNumber} onChange={(event) => setWeightNumber(event.target.value)} />
                                     </div>
-                                    <div className="column is-narrow">
-                                        <div className="control">
-                                            <div className="select is-success">
-                                                <select value={weightUnit} onChange={(event) => setWeightUnit(event.target.value)}>
-                                                    <option value="" disabled>Select a unit</option>
-                                                    <option value="pounds">pounds</option>
-                                                    <option value="kilograms">kilograms</option>
-                                                    <option value="stones">stones</option>
-                                                    <option value="">Don't provide</option>
-                                                </select>
-                                            </div>
+                                    <div className="control">
+                                        <div className="select is-success">
+                                            <select value={weightUnit} onChange={(event) => setWeightUnit(event.target.value)}>
+                                                <option value="" disabled>Select a unit</option>
+                                                <option value="pounds">pounds</option>
+                                                <option value="kilograms">kilograms</option>
+                                                <option value="stones">stones</option>
+                                                <option value="">Don't provide</option>
+                                            </select>
                                         </div>
                                     </div>
                                 </div>
@@ -221,7 +213,7 @@ function Signup({ setUser }) {
                                         </select>
                                     </div>
                                 </div>
-                            </div>
+                            </div>                          
                         </div>
                     </div>
 

@@ -160,7 +160,7 @@ function Account({ user, setUser }) {
                             <>
                                 <div className="field">
                                     <label className="label has-text-black">Height:</label>
-                                    <div className="field has-addons" style={{ justifyContent: 'center' }}>
+                                    <div className="field has-addons">
                                         <div className="control is-expanded">
                                             <input
                                                 className="input"
@@ -185,7 +185,7 @@ function Account({ user, setUser }) {
 
                                 <div className="field">
                                     <label className="label has-text-black">Weight:</label>
-                                    <div className="field has-addons" style={{ justifyContent: 'center' }}>
+                                    <div className="field has-addons">
                                         <div className="control is-expanded">
                                             <input
                                                 className="input"
