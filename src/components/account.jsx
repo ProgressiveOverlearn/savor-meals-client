@@ -159,7 +159,7 @@ function Account({ user, setUser }) {
                         {isEditing ? (
                             <>
                                 <div className="field">
-                                    <label className="label">Height:</label>
+                                    <label className="label has-text-black">Height:</label>
                                     <div className="field has-addons" style={{ justifyContent: 'center' }}>
                                         <div className="control is-expanded">
                                             <input
@@ -184,7 +184,7 @@ function Account({ user, setUser }) {
                                 </div>
 
                                 <div className="field">
-                                    <label className="label">Weight:</label>
+                                    <label className="label has-text-black">Weight:</label>
                                     <div className="field has-addons" style={{ justifyContent: 'center' }}>
                                         <div className="control is-expanded">
                                             <input
@@ -210,7 +210,7 @@ function Account({ user, setUser }) {
                                 </div>
 
                                 <div className="field">
-                                    <label className="label">Gender:</label>
+                                    <label className="label has-text-black">Gender:</label>
                                     <div className="control">
                                         <div className="select is-success">
                                             <select id="gender" name="gender" value={gender} onChange={(event) => setGender(event.target.value)}>
