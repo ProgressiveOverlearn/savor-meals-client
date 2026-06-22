@@ -1,4 +1,4 @@
-// This is on hold until I get into the backend
+// This is on hold until further updates
 function Password() {
 
     return(

@@ -4,7 +4,7 @@ function Footer() {
         <footer className="has-background-success-40 has-shadow has-text-white">
             <div className="columns is-justify-content-space-between">
                 <div className="column p-3 m-1 has-text-centered">
-                    <img src="images/SAVOR MEALS.png" alt="Logo" width="80" height="auto"/>
+                    <a href="/"><img src="images/SAVOR MEALS.png" alt="Logo" width="80" height="auto"/></a>
                 </div>
                 <div className="column has-text-centered is-flex is-flex-direction-column p-3 m-1">
                     <h3 className="is-size-5 has-text-weight-semibold">LINKS:</h3>
